@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,8 +93,16 @@ svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
 .pb-el:hover{color:var(--text-primary);}
 .pb-send{margin-left:auto;color:var(--text-muted);cursor:pointer;display:flex;}
 .below-prompt{display:flex;gap:12px;padding:4px 12px 0;font-size:11px;color:var(--text-muted);}
-.bp-item{display:flex;align-items:center;gap:3px;cursor:pointer;}
+.bp-item{display:flex;align-items:center;gap:3px;cursor:pointer;position:relative;}
 .bp-item:hover{color:var(--text-secondary);}
+.bp-dropdown{display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:240px;background:var(--bg-modal);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,.15);overflow:hidden;z-index:100;font-size:12px;}
+[data-theme="dark"] .bp-dropdown{box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.bp-dropdown.show{display:block;}
+.bp-drop-item{padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;gap:1px;transition:background .1s;}
+.bp-drop-item:hover{background:var(--bg-hover);}
+.bp-drop-item.active{background:var(--accent-bg);}
+.bp-drop-title{display:flex;align-items:center;gap:6px;font-weight:500;color:var(--text-bright);}
+.bp-drop-desc{font-size:10px;color:var(--text-muted);padding-left:22px;}
 
 /* ═══ RIGHT PANEL ═══ */
 .right-panel{display:none;width:var(--right-panel-w);flex-shrink:0;background:var(--bg-panel);border-left:1px solid var(--border);flex-direction:column;transition:background .2s;}
@@ -206,9 +214,9 @@ svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
   <span class="mobile-btn" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('backdrop').classList.toggle('show');"><svg class="ico" viewBox="0 0 16 16"><path d="M2 3.5C2 3.224 2.224 3 2.5 3H13.5C13.776 3 14 3.224 14 3.5S13.776 4 13.5 4H2.5C2.224 4 2 3.776 2 3.5ZM2 7.5C2 7.224 2.224 7 2.5 7H13.5C13.776 7 14 7.224 14 7.5S13.776 8 13.5 8H2.5C2.224 8 2 7.776 2 7.5ZM2 11.5C2 11.224 2.224 11 2.5 11H13.5C13.776 11 14 11.224 14 11.5S13.776 12 13.5 12H2.5C2.224 12 2 11.776 2 11.5Z"/></svg></span>
   <div style="flex:1;"></div>
   <div class="theme-btn" onclick="toggleTheme()">
-    <svg id="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    <svg id="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    <span id="theme-lbl">Light</span>
+    <svg id="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span id="theme-lbl">Dark</span>
   </div>
 </div>
 
@@ -243,7 +251,13 @@ svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
       </div>
       <div class="below-prompt">
         <div class="bp-item"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"/></svg> Folder <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
-        <div class="bp-item"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M12 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" transform="scale(.75) translate(2.5 2.5)"/><path d="M12 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fill="none" stroke="currentColor" stroke-width=".75" transform="scale(.55) translate(5.8 5.8)"/></svg> Default Approvals <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+        <div class="bp-item" id="approvals-toggle" onclick="toggleApprovalsMenu(event)"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M8 1.27l5 1.59v4.14c0 3.33-2.13 6.45-5 7.73C5.13 13.45 3 10.33 3 7V2.86l5-1.59Zm0 1.46L4 4.14V7c0 2.73 1.75 5.3 4 6.47 2.25-1.17 4-3.74 4-6.47V4.14L8 2.73Z"/><path d="M10.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.293l2.646-2.647a.5.5 0 0 1 .708 0Z"/></svg> Default Approvals <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg>
+          <div class="bp-dropdown" id="approvals-menu">
+            <div class="bp-drop-item active" onclick="navigateApproval('approvals-default',event)"><div class="bp-drop-title"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M8 1.27l5 1.59v4.14c0 3.33-2.13 6.45-5 7.73C5.13 13.45 3 10.33 3 7V2.86l5-1.59Zm0 1.46L4 4.14V7c0 2.73 1.75 5.3 4 6.47 2.25-1.17 4-3.74 4-6.47V4.14L8 2.73Z"/><path d="M10.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.293l2.646-2.647a.5.5 0 0 1 .708 0Z"/></svg> Default Approvals</div><div class="bp-drop-desc">Copilot uses your configured settings</div></div>
+            <div class="bp-drop-item" onclick="navigateApproval('approvals-bypass',event)"><div class="bp-drop-title"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M7.56 1.22a.75.75 0 0 1 .88 0l1.5 1.1a.75.75 0 0 1-.88 1.22L8 2.72l-1.06.82a.75.75 0 0 1-.88-1.22l1.5-1.1ZM8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM3.5 8a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z"/></svg> Bypass Approvals</div><div class="bp-drop-desc">All tool calls are auto-approved</div></div>
+            <div class="bp-drop-item" onclick="navigateApproval('approvals-autopilot',event)"><div class="bp-drop-title"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M8 1a.5.5 0 0 1 .5.5V3h2a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h2V1.5A.5.5 0 0 1 8 1ZM3 7.5a5 5 0 0 1 10 0v1a.5.5 0 0 1-.146.354l-2 2A.5.5 0 0 1 10.5 11h-5a.5.5 0 0 1-.354-.146l-2-2A.5.5 0 0 1 3 8.5v-1Zm5-3.5a4 4 0 0 0-4 4v.793l1.854 1.854h4.292L12 8.793V8a4 4 0 0 0-4-4Zm-1 9.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H7Z"/></svg> Autopilot (Preview)</div><div class="bp-drop-desc">Autonomously iterates from start to finish</div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -267,6 +281,7 @@ const ICO = {
   zap: '<svg class="ico" viewBox="0 0 16 16"><path d="M9 1L3 9h4l-1 6 6-8H8l1-6Z" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>',
   server: '<svg class="ico" viewBox="0 0 16 16"><path d="M12 11.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm0-4a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM14 4.5a1.5 1.5 0 0 1-.39 1 1.5 1.5 0 0 1 .39 1v2a1.5 1.5 0 0 1-.39 1 1.5 1.5 0 0 1 .39 1v2a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-2a1.5 1.5 0 0 1 .39-1 1.5 1.5 0 0 1-.39-1v-2a1.5 1.5 0 0 1 .39-1A1.5 1.5 0 0 1 2 4.5v-2A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5v2ZM3 4.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v2Zm9.5 1.5h-9a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5ZM13 10.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2Zm-1.5-7a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/></svg>',
   plug: '<svg class="ico" viewBox="0 0 16 16"><path d="M10.723 4H10V1.5a.5.5 0 0 0-1 0V4H7V1.5a.5.5 0 0 0-1 0V4h-.723A1.278 1.278 0 0 0 4 5.278V8c0 2.036 1.529 3.722 3.5 3.969V14.5a.5.5 0 0 0 1 0v-2.531C10.471 11.722 12 10.037 12 8V5.278C12 4.573 11.427 4 10.723 4ZM11 8a3 3 0 0 1-6 0V5.278A.278.278 0 0 1 5.277 5h5.445a.278.278 0 0 1 .277.278V8Z"/></svg>',
+  shield: '<svg class="ico" viewBox="0 0 16 16"><path d="M8 1.27l5 1.59v4.14c0 3.33-2.13 6.45-5 7.73C5.13 13.45 3 10.33 3 7V2.86l5-1.59Zm0 1.46L4 4.14V7c0 2.73 1.75 5.3 4 6.47 2.25-1.17 4-3.74 4-6.47V4.14L8 2.73Z"/><path d="M10.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.293l2.646-2.647a.5.5 0 0 1 .708 0Z"/></svg>',
   folder: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"/></svg>',
   file: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M5 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5.414a1.5 1.5 0 0 0-.44-1.06L9.647 1.44A1.5 1.5 0 0 0 8.586 1H5ZM4 3a1 1 0 0 1 1-1h3v2.5A1.5 1.5 0 0 0 9.5 6H12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3Zm7.793 2H9.5a.5.5 0 0 1-.5-.5V2.207L11.793 5Z"/></svg>',
   chevron: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg>',
@@ -310,16 +325,22 @@ const MENU=[
 ];
 
 const EXTRA_FEATURES=[
-  {id:"overview",cat:"session",title:"App Overview",desc:"The standalone VS Code Sessions app \u2014 a lightweight agent-focused editor, purpose-built for agent workflows.",
+  {id:"overview",cat:"session",title:"App Overview",desc:"The standalone VS Code Sessions app — a lightweight agent-focused editor, purpose-built for agent workflows.",
    content:`## What Is VS Code Sessions?\n\n| | Agent Sessions (feature) | Sessions (standalone app) |\n|---|---|---|\n| What | Feature inside VS Code since v1.107 | Separate experimental application |\n| Released | November 2025 (GA) | Experimental / unreleased |\n| UI | Sidebar panel in full VS Code | Purpose-built minimal interface |\n\n## Why a Standalone App?\n\nThe standalone app strips away the file explorer, editor tabs, and extensions sidebar \u2014 leaving only:\n\n- Session management (create, archive, fork, export)\n- Agent configuration (the CUSTOMIZATIONS sidebar)\n- Prompt input + model selection\n- Execution mode toggle (Local / Cloud)\n- Filesystem scope control\n\n## Key Architecture\n\n- **Multi-agent orchestration** \u2014 Run Copilot, Claude, and Codex from one place\n- **Session handoff** \u2014 Local \u2192 background \u2192 cloud with preserved context\n- **Isolated worktrees** \u2014 Each session gets its own Git worktree\n\n## The Three Panels\n\n| Panel | Purpose |\n|-------|---------|\n| Left sidebar | Session list + CUSTOMIZATIONS config |\n| Center | Chat canvas + prompt bar + exec mode |\n| Right | Filesystem tree (local) or repo tree (cloud) |`},
+  {id:"installation",cat:"session",title:"Installation",desc:"How to get the standalone VS Code Sessions app running on your machine.",
+   content:`## Prerequisites\n\n- **VS Code Insiders** \u2014 The Sessions app is currently only available through VS Code Insiders builds\n- **GitHub Copilot subscription** \u2014 Free tier works for basic features; Pro or Pro+ recommended for multi-agent access\n- **GitHub account** \u2014 Required for authentication and cloud agent features\n\n## Step 1: Install VS Code Insiders\n\nDownload from the official VS Code Insiders page. The Sessions app ships as part of the Insiders build.\n\n\`\`\`bash\n# macOS (Homebrew)\nbrew install --cask visual-studio-code-insiders\n\`\`\`\n\n\`\`\`bash\n# Windows (winget)\nwinget install Microsoft.VisualStudioCode.Insiders\n\`\`\`\n\n\`\`\`bash\n# Linux (snap)\nsudo snap install code-insiders --classic\n\`\`\`\n\n## Step 2: Enable Agent Sessions\n\nOpen VS Code Insiders and enable the feature:\n\n1. Open **Settings** (Ctrl/Cmd + ,)\n2. Search for \`chat.agent.enabled\`\n3. Set to **true**\n4. Search for \`github.copilot.chat.sessions.enabled\`\n5. Set to **true**\n\n## Step 3: Sign in to GitHub\n\nClick the **Accounts** icon in the bottom-left corner and sign in with your GitHub account that has an active Copilot subscription.\n\n## Step 4: Open Sessions\n\nOpen the **Command Palette** (Ctrl/Cmd + Shift + P) and run:\n\n\`\`\`\nSessions: New Session\n\`\`\`\n\n## Verifying Your Setup\n\n| Check | Expected |\n|-------|----------|\n| VS Code version | Insiders (1.107+) |\n| Copilot extension | Installed and signed in |\n| Sessions sidebar | Visible in Chat panel |\n| Agent dropdown | Shows available models |`},
   {id:"local-cloud",cat:"exec",title:"Local / Cloud Execution",desc:"Local: private, fast, isolated Git worktrees. Cloud: GitHub infrastructure, autonomous PRs.",
    content:`## Execution Modes\n\n## Local Mode\n\n| Property | Value |\n|----------|-------|\n| Runs on | Your machine |\n| Filesystem | Local disk + Git worktrees |\n| Privacy | Fully private |\n| Latency | Minimal |\n\n## Cloud Mode\n\n| Property | Value |\n|----------|-------|\n| Runs on | GitHub infrastructure |\n| Output | Pull requests, issues, comments |\n| Access | GitHub.com, Mobile, CLI, VS Code |\n\n## Session Handoff\n\n1. Brainstorm interactively with a local agent\n2. Refine the plan\n3. Hand off to a cloud agent for autonomous execution\n4. Full conversation context preserved at each transition`},
   {id:"add-action",cat:"modal",title:"Add Action Modal",desc:"Configure named shell tasks tied to the session worktree lifecycle.",
    content:`## Actions \u2014 Shell Tasks\n\n## Modal Fields\n\n| Field | Purpose |\n|-------|---------|\n| Name | Optional human-readable label |\n| Command | Any shell command: \`npm run dev\`, \`make build\` |\n| Auto-run | Run automatically when worktree is created |\n| Save In | Workspace (shared) or User (personal) |\n\n## Scope\n\n- **Workspace** \u2014 Committed to the repo, shared with team\n- **User** \u2014 Stays local, personal preference`},
   {id:"prompt-bar",cat:"input",title:"Prompt Input Bar",desc:"Agent selector, model selector (Claude Sonnet 4.6, Copilot, Codex), folder picker, approval controls.",
    content:`## Prompt Input Bar\n\n## Components\n\n| Element | Purpose |\n|---------|---------|\n| + Button | Add context, files, or attachments |\n| Agent dropdown | Select which agent handles this session |\n| Model selector | Choose AI model |\n| Send button | Submit prompt to the agent |\n| Folder picker | Set working directory |\n| Default Approvals | Control agent permission level |\n\n## Default Approvals\n\n| Action | Options |\n|--------|---------|\n| File reads | Usually auto-approved |\n| File writes | Configurable |\n| Terminal commands | Configurable |\n| Git operations | Recommended: ask first |`},
-  {id:"fs-panel",cat:"files",title:"Filesystem Tree Panel",desc:"Right-side panel showing the scoped project tree. Agent only sees the worktree root.",
-   content:`## Filesystem Panel\n\n## Scope Control\n\nThe agent can **only** see files within the worktree root. It cannot access your home directory, other projects, or system files.\n\n## Changes vs Files Tabs\n\n| Tab | Shows |\n|-----|-------|\n| Changes | Files modified by the agent |\n| Files | Full project tree within scope |`},
+  {id:"approvals-default",cat:"input",title:"Default Approvals",desc:"Copilot uses your configured settings \u2014 file reads auto-approved, writes and commands require confirmation.",
+   content:`## Default Approvals\n\nThe standard approval mode. Copilot follows your configured permission settings.\n\n## What Gets Approved Automatically\n\n| Action | Behavior |\n|--------|----------|\n| File reads | Auto-approved |\n| File writes | Requires confirmation |\n| Terminal commands | Requires confirmation |\n| Git operations | Requires confirmation |\n| MCP tool calls | Requires confirmation |\n\n## Configuration\n\nYou can customize which actions require approval in your workspace or user settings. The defaults are conservative \u2014 only read operations are auto-approved.\n\n## When to Use\n\nThis is the recommended mode for day-to-day development. You stay in the loop for any operation that modifies files, runs commands, or interacts with external tools.`},
+  {id:"approvals-bypass",cat:"input",title:"Bypass Approvals",desc:"All tool calls are auto-approved \u2014 the agent can read, write, and execute without asking.",
+   content:`## Bypass Approvals\n\nAll agent actions are auto-approved. No confirmation dialogs.\n\n## What Changes\n\n| Action | Behavior |\n|--------|----------|\n| File reads | Auto-approved |\n| File writes | Auto-approved |\n| Terminal commands | Auto-approved |\n| Git operations | Auto-approved |\n| MCP tool calls | Auto-approved |\n\n## When to Use\n\n- Trusted, well-scoped tasks in **isolated worktrees**\n- Repetitive operations where confirmation adds friction without safety\n- Tasks where the agent's plan has already been reviewed\n\n## Safety Considerations\n\n- Never use on your main branch\n- Always use with isolated Git worktrees so changes can be reviewed before merging\n- The agent can execute any shell command without asking \u2014 ensure your environment is sandboxed`},
+  {id:"approvals-autopilot",cat:"input",title:"Autopilot (Preview)",desc:"Autonomously iterates from start to finish \u2014 plans, executes, and self-corrects without human checkpoints.",
+   content:`## Autopilot (Preview)\n\nThe most autonomous mode. The agent plans, executes, tests, and self-corrects in a continuous loop until the task is complete.\n\n## How It Differs from Bypass\n\n| | Bypass | Autopilot |\n|---|---|---|\n| Approvals | Skipped | Skipped |\n| Iteration | Waits for your next prompt | Continues autonomously |\n| Self-correction | No | Yes \u2014 retries on failure |\n| Completion | Stops after one response | Runs until task is done |\n\n## When to Use\n\n- Well-defined tasks with clear success criteria\n- Best combined with a **Plan agent** that breaks the task into steps first\n- Multi-file refactors, test generation, documentation sweeps\n\n## Limitations\n\n- Marked **Preview** \u2014 expect rough edges and occasional loops\n- Should only be used in isolated worktrees\n- No human checkpoints means errors compound \u2014 review the diff carefully after completion\n- Long-running tasks may consume significant API quota`},
   {id:"session-mgmt",cat:"session",title:"Session Management",desc:"Create, archive, rename, fork, filter, and export sessions.",
    content:`## Managing Sessions\n\n| Operation | What it does |\n|-----------|--------------|\n| New Session | Fresh session with own context |\n| Archive | Save for later reference |\n| Rename | Descriptive name |\n| Fork | Branch the conversation |\n| Filter | Search through past sessions |\n| Export | Download as JSON |\n| Handoff | Transfer to background/cloud agent |\n\n## Session Handoff\n\nLocal (interactive) \u2192 Background (CLI agent) \u2192 Cloud (GitHub PR)`},
   {id:"chat-customizations",cat:"config",title:"Chat Customizations Dialog",desc:"The full-screen configuration dialog with left nav, search, Built-In/Custom sections, Workspace/User scope.",
@@ -328,7 +349,7 @@ const EXTRA_FEATURES=[
   {id:"annotated",cat:"session",title:"Annotated Screenshot",desc:"Interactive annotated screenshot with numbered badges.",content:"__SCREENSHOT__"},
 ];
 
-const ALL_ITEMS=[...MENU,...EXTRA_FEATURES];
+const ALL_ITEMS=[...EXTRA_FEATURES,...MENU];
 let selectedMenuId=null;
 
 /* ═══ RENDER SIDEBAR MENU ═══ */
@@ -385,7 +406,6 @@ function showWelcome(){
     return `<div class="feature-card" data-id="${item.id}"><div class="fc-badge" style="${bc(item.cat)}">${c?.label||''}</div><div class="fc-title">${item.title}</div><div class="fc-desc">${item.desc.slice(0,90)}${item.desc.length>90?'...':''}</div></div>`;
   }).join('');
   canvas.innerHTML=`<div class="welcome-view">
-    <div class="welcome-logo">${ICO.logo}</div>
     <div class="welcome-title">Explore VS Code Sessions</div>
     <div class="welcome-subtitle">Learn the standalone Sessions app by exploring its features.<br>Click a feature card below, or browse the sidebar menu items.</div>
     <div class="feature-grid">${cards}</div></div>`;
@@ -557,15 +577,30 @@ function fmt(s){return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ═══ THEME ═══ */
-function toggleTheme(){
-  const h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';
-  h.setAttribute('data-theme',n);document.getElementById('theme-lbl').textContent=n==='light'?'Light':'Dark';
-  document.getElementById('ico-moon').style.display=n==='dark'?'':'none';
-  document.getElementById('ico-sun').style.display=n==='light'?'':'none';
-  localStorage.setItem('sessions-theme',n);
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('theme-lbl').textContent=t==='light'?'Light':'Dark';
+  document.getElementById('ico-moon').style.display=t==='dark'?'':'none';
+  document.getElementById('ico-sun').style.display=t==='light'?'':'none';
 }
-if(localStorage.getItem('sessions-theme')==='dark')toggleTheme();
+function toggleTheme(){
+  const n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  applyTheme(n);localStorage.setItem('sessions-theme',n);
+}
+applyTheme(localStorage.getItem('sessions-theme')||'dark');
 
+/* ═══ APPROVALS DROPDOWN ═══ */
+function toggleApprovalsMenu(e){
+  e.stopPropagation();
+  document.getElementById('approvals-menu').classList.toggle('show');
+}
+function navigateApproval(id,e){
+  e.stopPropagation();
+  document.getElementById('approvals-menu').classList.remove('show');
+  const item=ALL_ITEMS.find(i=>i.id===id);
+  if(item)showDetail(item);
+}
+document.addEventListener('click',()=>document.getElementById('approvals-menu').classList.remove('show'));
 
 showWelcome();
 </script>
