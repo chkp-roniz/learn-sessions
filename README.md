@@ -5,6 +5,7 @@
   <a href="https://github.com/chkp-roniz/learn-sessions/stargazers"><img src="https://img.shields.io/github/stars/chkp-roniz/learn-sessions?style=flat-square&color=b8965e" alt="Stars"></a>
   <img src="https://img.shields.io/badge/zero_dependencies-vanilla_JS-3a3632?style=flat-square" alt="Zero Dependencies">
   <img src="https://img.shields.io/badge/single_file-index.html-569cd6?style=flat-square" alt="Single File">
+  <a href='https://ko-fi.com/E1E71WJ8UZ' target='_blank'><img height='24' style='border:0px;height:24px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 </p>
 
 ---
