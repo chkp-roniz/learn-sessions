@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Explore VS Code Sessions</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100' fill='none' stroke='%23d4856a' stroke-width='4' stroke-linejoin='round'%3E%3Cpolygon points='50,8 16,28 16,72 50,92 50,52' fill='%23d4856a' opacity='.15'/%3E%3Cline x1='16' y1='28' x2='50' y2='52'/%3E%3Cline x1='16' y1='72' x2='50' y2='52'/%3E%3Cpolygon points='70,8 104,28 104,72 70,92 70,52' fill='%23d4856a' opacity='.15'/%3E%3Cline x1='104' y1='28' x2='70' y2='52'/%3E%3Cline x1='104' y1='72' x2='70' y2='52'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive explorer for VS Code Sessions — the standalone experimental app from Microsoft for AI agent workflows.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://chkp-roniz.github.io/learn-sessions/">
+<meta property="og:title" content="Explore VS Code Sessions">
+<meta property="og:description" content="Learn the standalone Sessions app by exploring an interactive simulation. Agents, Skills, Hooks, MCP Servers, Plugins and more.">
+<meta property="og:image" content="https://chkp-roniz.github.io/learn-sessions/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Explore VS Code Sessions">
+<meta name="twitter:description" content="Interactive explorer for the standalone VS Code Sessions app — AI agent workflows, zero dependencies.">
+<meta name="twitter:image" content="https://chkp-roniz.github.io/learn-sessions/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -119,16 +130,16 @@ svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
 .rp-dot{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0;}
 
 /* ═══ WELCOME ═══ */
-.welcome-view{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;max-width:720px;margin:0 auto;width:100%;}
+.welcome-view{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 24px;max-width:960px;margin:0 auto;width:100%;}
 .welcome-logo{width:120px;height:120px;margin-bottom:24px;opacity:.12;color:var(--text-muted);}
-.welcome-title{font-size:24px;font-weight:700;color:var(--text-bright);margin-bottom:4px;}
-.welcome-subtitle{font-size:13px;color:var(--text-secondary);margin-bottom:28px;text-align:center;line-height:1.7;}
-.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;}
-.feature-card{background:var(--bg-surface);padding:14px;cursor:pointer;transition:background .12s;}
+.welcome-title{font-size:22px;font-weight:700;color:var(--text-bright);margin-bottom:2px;}
+.welcome-subtitle{font-size:12px;color:var(--text-secondary);margin-bottom:16px;text-align:center;line-height:1.6;}
+.feature-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;}
+.feature-card{background:var(--bg-surface);padding:10px 12px;cursor:pointer;transition:background .12s;}
 .feature-card:hover{background:var(--bg-elevated);}
-.fc-badge{display:inline-block;font-size:9px;font-weight:600;padding:1px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
-.fc-title{font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:3px;}
-.fc-desc{font-size:11px;color:var(--text-secondary);line-height:1.5;}
+.fc-badge{display:inline-block;font-size:8px;font-weight:600;padding:1px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;}
+.fc-title{font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:2px;}
+.fc-desc{font-size:10px;color:var(--text-secondary);line-height:1.4;}
 
 /* ═══ DETAIL VIEW ═══ */
 .detail-view{max-width:700px;margin:0 auto;padding:28px 32px;width:100%;}
@@ -203,7 +214,8 @@ svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
 .tip{position:fixed;z-index:200;background:var(--bg-modal);border:1px solid var(--border);color:var(--text-bright);padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;max-width:260px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.15);opacity:0;transition:opacity .12s;line-height:1.5;}
 [data-theme="dark"] .tip{box-shadow:0 4px 16px rgba(0,0,0,.5);}
 .tip.show{opacity:1;}.tip b{display:block;margin-bottom:2px;color:var(--text-bright);}
-@media(max-width:900px){.right-panel{display:none;}.sidebar{width:200px;}}
+@media(max-width:1100px){.feature-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:900px){.right-panel{display:none;}.sidebar{width:200px;}.feature-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:640px){.sidebar{position:fixed;left:0;top:40px;bottom:0;z-index:50;width:250px;transform:translateX(-100%);transition:transform .25s;box-shadow:4px 0 20px rgba(0,0,0,.15);}.sidebar.open{transform:translateX(0);}.mobile-btn{display:flex!important;}.backdrop{display:none;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.3);}.backdrop.show{display:block;}}
 .mobile-btn{display:none!important;align-items:center;justify-content:center;width:24px;height:24px;cursor:pointer;color:var(--text-muted);font-size:16px;border-radius:3px;}.mobile-btn:hover{background:var(--bg-hover);}
 </style>
@@ -401,9 +413,10 @@ function selectMenuItem(id){
 function showWelcome(){
   selectedMenuId=null;document.querySelectorAll('.menu-item').forEach(el=>el.classList.remove('selected'));
   const canvas=document.getElementById('canvas');
-  const cards=ALL_ITEMS.filter(i=>i.id!=='annotated').map(item=>{
+  const HIDDEN_CARDS=['annotated','approvals-default','approvals-bypass','approvals-autopilot'];
+  const cards=ALL_ITEMS.filter(i=>!HIDDEN_CARDS.includes(i.id)).map(item=>{
     const c=BADGE_COLORS[item.cat];
-    return `<div class="feature-card" data-id="${item.id}"><div class="fc-badge" style="${bc(item.cat)}">${c?.label||''}</div><div class="fc-title">${item.title}</div><div class="fc-desc">${item.desc.slice(0,90)}${item.desc.length>90?'...':''}</div></div>`;
+    return `<div class="feature-card" data-id="${item.id}"><div class="fc-badge" style="${bc(item.cat)}">${c?.label||''}</div><div class="fc-title">${item.title}</div><div class="fc-desc">${item.desc.slice(0,70)}${item.desc.length>70?'...':''}</div></div>`;
   }).join('');
   canvas.innerHTML=`<div class="welcome-view">
     <div class="welcome-title">Explore VS Code Sessions</div>

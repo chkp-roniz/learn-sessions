@@ -1,22 +1,83 @@
-# Learn Sessions
+<p align="center">
+  <img src=".docs/logo.png" alt="Learn Sessions" width="100">
+</p>
+
+<h3 align="center">Learn VS Code Sessions by exploring it.</h3>
+
+<p align="center">
+  <a href="https://chkp-roniz.github.io/learn-sessions/"><img src="https://img.shields.io/badge/live_demo-learn--sessions-d4856a?style=flat-square" alt="Live Demo"></a>
+  <a href="https://github.com/chkp-roniz/learn-sessions/stargazers"><img src="https://img.shields.io/github/stars/chkp-roniz/learn-sessions?style=flat-square&color=b8965e" alt="Stars"></a>
+  <img src="https://img.shields.io/badge/zero_dependencies-vanilla_JS-3a3632?style=flat-square" alt="Zero Dependencies">
+  <img src="https://img.shields.io/badge/single_file-index.html-569cd6?style=flat-square" alt="Single File">
+</p>
+
+---
 
 An interactive single-page explorer that teaches you everything about **VS Code Sessions** — the standalone experimental app from Microsoft that strips VS Code down to its agentic core.
 
-## Why this exists
+There is no official documentation, no public download page, and no tutorial. This project fills that gap with a fully interactive simulation you can click through — no access to the app required.
 
-VS Code Sessions is a new, largely undocumented app. It first surfaced through a [February 2026 GitHub issue](https://github.com/microsoft/vscode-codicons/issues/436) requesting an app icon, and early sightings in VS Code Insiders builds. There is no official documentation, no public download page, and no tutorial — just scattered screenshots and community discussion.
+<p align="center">
+  <img src=".docs/screenshot.png" alt="Screenshot" width="820">
+</p>
 
-This project fills that gap. Rather than writing a static doc, it recreates the Sessions UI as a fully interactive HTML simulation so you can explore every feature — Agents, Skills, Instructions, Prompts, Hooks, MCP Servers, Plugins — and understand how they fit together, without needing access to the app itself.
+## What You'll Learn
 
-## What's inside
+| Feature | Description |
+|---------|-------------|
+| 🤖 **Agents** | Custom AI personas with model choices, instructions, and permissions |
+| 💡 **Skills** | Reusable capability bundles attached to agents |
+| 📖 **Instructions** | Persistent system-level prompts injected into every session |
+| 💬 **Prompts** | Saved prompt templates for quick invocation |
+| ⚡ **Hooks** | Event-driven automation before/after agent actions |
+| 🖥️ **MCP Servers** | External tool integrations via Model Context Protocol |
+| 🔌 **Plugins** | Installable workflow bundles combining agents + skills + prompts |
+| 🔀 **Local / Cloud** | Local execution with Git worktrees or cloud via GitHub PRs |
+| 🛡️ **Approvals** | Default, Bypass, and Autopilot (Preview) permission modes |
+| 📋 **Sessions** | Create, archive, fork, filter, export, and hand off sessions |
 
-- **`index.html`** — the entire explorer in a single self-contained HTML file (no build step, no dependencies). Open it in any browser.
-- **`.docs/`** — reference screenshots and research notes used during development.
+## Try It
 
-## Quick start
+**👉 [chkp-roniz.github.io/learn-sessions](https://chkp-roniz.github.io/learn-sessions/)**
+
+No install, no signup, no build step. Just open it and start clicking.
+
+Or run locally:
+
+```bash
+git clone https://github.com/chkp-roniz/learn-sessions.git
+open learn-sessions/index.html
+```
+
+## Project Structure
 
 ```
-open index.html
+learn-sessions/
+├── index.html          # The entire explorer — single self-contained file
+├── README.md
+└── .docs/              # Reference screenshots and research notes
+    ├── logo.png
+    ├── approvals.png
+    ├── app.png
+    └── ...
 ```
 
-Or just double-click the file. That's it.
+Zero frameworks, zero bundlers, zero build steps. One HTML file with embedded CSS and vanilla JS.
+
+## Background
+
+VS Code Sessions first surfaced through a [February 2026 GitHub issue](https://github.com/microsoft/vscode-codicons/issues/436) requesting an app icon for *"a standalone experimental app called Sessions — a lightweight version of VS Code focused on agent workflows."* The issue requested blue, green, and orange icon variants matching VS Code's Stable, Insiders, and Exploration release channels.
+
+This explorer was built from publicly available screenshots and community discussion to help developers understand what Sessions offers before any official docs exist.
+
+## Contributing
+
+Contributions welcome! Areas where help would be great:
+
+- Content updates as new Sessions features ship
+- Mobile experience improvements
+- Accessibility (keyboard nav, ARIA)
+
+## License
+
+[MIT](LICENSE)
