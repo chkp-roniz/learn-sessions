@@ -1,7 +1,3 @@
-<p align="center">
-  <img src=".docs/logo.png" alt="Learn Sessions" width="100">
-</p>
-
 <h3 align="center">Learn VS Code Sessions by exploring it.</h3>
 
 <p align="center">
@@ -18,23 +14,23 @@ An interactive single-page explorer that teaches you everything about **VS Code 
 There is no official documentation, no public download page, and no tutorial. This project fills that gap with a fully interactive simulation you can click through — no access to the app required.
 
 <p align="center">
-  <img src=".docs/screenshot.png" alt="Screenshot" width="820">
+  <img src="./resources/screenshot.png" alt="Screenshot" width="820">
 </p>
 
 ## What You'll Learn
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 **Agents** | Custom AI personas with model choices, instructions, and permissions |
-| 💡 **Skills** | Reusable capability bundles attached to agents |
-| 📖 **Instructions** | Persistent system-level prompts injected into every session |
-| 💬 **Prompts** | Saved prompt templates for quick invocation |
-| ⚡ **Hooks** | Event-driven automation before/after agent actions |
-| 🖥️ **MCP Servers** | External tool integrations via Model Context Protocol |
-| 🔌 **Plugins** | Installable workflow bundles combining agents + skills + prompts |
-| 🔀 **Local / Cloud** | Local execution with Git worktrees or cloud via GitHub PRs |
-| 🛡️ **Approvals** | Default, Bypass, and Autopilot (Preview) permission modes |
-| 📋 **Sessions** | Create, archive, fork, filter, export, and hand off sessions |
+| Feature              | Description                                                          |
+| -------------------- | -------------------------------------------------------------------- |
+| 🤖 **Agents**        | Custom AI personas with model choices, instructions, and permissions |
+| 💡 **Skills**        | Reusable capability bundles attached to agents                       |
+| 📖 **Instructions**  | Persistent system-level prompts injected into every session          |
+| 💬 **Prompts**       | Saved prompt templates for quick invocation                          |
+| ⚡ **Hooks**         | Event-driven automation before/after agent actions                   |
+| 🖥️ **MCP Servers**   | External tool integrations via Model Context Protocol                |
+| 🔌 **Plugins**       | Installable workflow bundles combining agents + skills + prompts     |
+| 🔀 **Local / Cloud** | Local execution with Git worktrees or cloud via GitHub PRs           |
+| 🛡️ **Approvals**     | Default, Bypass, and Autopilot (Preview) permission modes            |
+| 📋 **Sessions**      | Create, archive, fork, filter, export, and hand off sessions         |
 
 ## Try It
 
@@ -66,7 +62,7 @@ Zero frameworks, zero bundlers, zero build steps. One HTML file with embedded CS
 
 ## Background
 
-VS Code Sessions first surfaced through a [February 2026 GitHub issue](https://github.com/microsoft/vscode-codicons/issues/436) requesting an app icon for *"a standalone experimental app called Sessions — a lightweight version of VS Code focused on agent workflows."* The issue requested blue, green, and orange icon variants matching VS Code's Stable, Insiders, and Exploration release channels.
+VS Code Sessions first surfaced through a [February 2026 GitHub issue](https://github.com/microsoft/vscode-codicons/issues/436) requesting an app icon for _"a standalone experimental app called Sessions — a lightweight version of VS Code focused on agent workflows."_ The issue requested blue, green, and orange icon variants matching VS Code's Stable, Insiders, and Exploration release channels.
 
 This explorer was built from publicly available screenshots and community discussion to help developers understand what Sessions offers before any official docs exist.
 
