@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore VS Code Sessions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-base:#faf9f7;--bg-surface:#f5f3f0;--bg-elevated:#edeae6;--bg-hover:#eae8e3;
+  --bg-active:#e0ddd7;--bg-sidebar:#f5f3f0;--bg-titlebar:#eae8e3;--bg-input:#ffffff;
+  --bg-panel:#f9f8f6;--bg-modal:#ffffff;
+  --border:#e0ddd7;--border-light:#ebe8e3;
+  --text-primary:#3b3735;--text-secondary:#7a756c;--text-muted:#a8a29e;
+  --text-bright:#1a1816;--text-placeholder:#c5c0b8;
+  --accent:#d4856a;--accent-hover:#c47a5e;--accent-bg:rgba(212,133,106,.12);--accent-border:#e8b4a0;
+  --badge-green:#6a9955;--badge-blue:#569cd6;--badge-purple:#b07cc6;
+  --badge-teal:#4ec9b0;--badge-gold:#cca75a;--badge-rust:#c47a50;
+  --radius:8px;--radius-sm:5px;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',Consolas,'Courier New',monospace;
+  --sidebar-w:230px;--right-panel-w:260px;
+}
+[data-theme="dark"]{
+  --bg-base:#1a1816;--bg-surface:#22201d;--bg-elevated:#2a2825;--bg-hover:#33302c;
+  --bg-active:#3d3a35;--bg-sidebar:#22201d;--bg-titlebar:#2a2825;--bg-input:#2a2825;
+  --bg-panel:#1e1c19;--bg-modal:#2a2825;
+  --border:#3d3a35;--border-light:#33302c;
+  --text-primary:#b8b0a4;--text-secondary:#847c72;--text-muted:#5c564f;
+  --text-bright:#e6dfd6;--text-placeholder:#5c564f;
+  --accent:#d4856a;--accent-hover:#e09580;--accent-bg:rgba(212,133,106,.15);--accent-border:#9e6550;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-ui);background:var(--bg-base);color:var(--text-primary);height:100vh;overflow:hidden;display:flex;flex-direction:column;line-height:1.5;transition:background .2s,color .2s;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+svg.ico{width:16px;height:16px;fill:currentColor;flex-shrink:0;vertical-align:middle;}
+svg.ico-sm{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
+
+/* ═══ TITLE BAR ═══ */
+.titlebar{height:40px;flex-shrink:0;background:var(--bg-titlebar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:14px;user-select:none;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;border-radius:3px;}
+.tb-icon:hover{color:var(--text-secondary);background:var(--bg-hover);}
+.tb-center{flex:1;display:flex;align-items:center;justify-content:center;gap:20px;}
+.tb-tabs{display:flex;gap:10px;font-size:13px;}
+.tb-tab{color:var(--text-muted);cursor:pointer;padding:2px 0;position:relative;}
+.tb-tab:hover{color:var(--text-secondary);}
+.tb-tab.active{color:var(--text-primary);font-weight:500;}
+.tb-tab.active::after{content:'';position:absolute;bottom:-10px;left:0;right:0;height:2px;background:var(--accent);}
+.tb-dot{color:var(--text-muted);font-size:10px;}
+.tb-right{display:flex;align-items:center;gap:6px;}
+.theme-btn{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--radius-sm);cursor:pointer;font-size:11px;color:var(--text-muted);border:1px solid var(--border);background:var(--bg-surface);transition:all .15s;}
+.theme-btn:hover{background:var(--bg-hover);color:var(--text-primary);}
+.theme-btn svg{width:14px;height:14px;}
+
+/* ═══ MAIN LAYOUT ═══ */
+.app-body{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:background .2s;}
+.new-session-btn{margin:10px 12px 8px;padding:7px 0;text-align:center;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-input);font-size:13px;font-weight:500;color:var(--text-primary);cursor:pointer;transition:all .15s;}
+.new-session-btn:hover{background:var(--bg-hover);}
+.session-section{padding:8px 14px;}
+.session-section-header{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);display:flex;justify-content:space-between;margin-bottom:6px;}
+.session-item{padding:6px 8px;border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:6px;}
+.session-item:hover{background:var(--bg-hover);color:var(--text-primary);}
+.session-item.active{background:var(--accent-bg);color:var(--accent);font-weight:500;}
+.session-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);flex-shrink:0;}
+.session-item.active .session-dot{background:var(--accent);}
+.custom-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);padding:16px 14px 6px;}
+.custom-menu{flex:1;overflow-y:auto;}
+.menu-item{display:flex;align-items:center;gap:8px;padding:5px 14px;font-size:13px;color:var(--text-primary);cursor:pointer;transition:all .12s;position:relative;}
+.menu-item:hover{background:var(--bg-hover);}
+.menu-item.selected{background:var(--accent-bg);color:var(--accent);}
+.menu-item.selected::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:var(--accent);border-radius:1px;}
+.mi-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+.menu-item.selected .mi-icon{color:var(--accent);}
+.mi-badge{margin-left:auto;font-size:11px;color:var(--text-muted);background:var(--bg-elevated);padding:0 6px;border-radius:8px;font-weight:500;}
+.sidebar-footer{border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);}
+.sf-avatar{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+
+/* ═══ CENTER ═══ */
+.center-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-base);transition:background .2s;position:relative;}
+.exec-bar{display:flex;align-items:center;justify-content:center;padding:10px 16px;gap:16px;border-bottom:1px solid var(--border-light);}
+.mode-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.mode-btn{padding:4px 18px;font-size:12px;font-weight:500;color:var(--text-secondary);background:var(--bg-input);cursor:pointer;transition:all .15s;}
+.mode-btn.active{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);margin:-1px;border-radius:var(--radius-sm);font-weight:600;}
+.mode-btn+.mode-btn{border-left:1px solid var(--border);}
+.downloads-pick{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;}
+.canvas-content{flex:1;overflow-y:auto;padding:0;}
+.prompt-area{border-top:1px solid var(--border);padding:8px 16px;}
+.prompt-bar{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-input);padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.pb-el{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--text-secondary);cursor:pointer;}
+.pb-el:hover{color:var(--text-primary);}
+.pb-send{margin-left:auto;color:var(--text-muted);cursor:pointer;display:flex;}
+.below-prompt{display:flex;gap:12px;padding:4px 12px 0;font-size:11px;color:var(--text-muted);}
+.bp-item{display:flex;align-items:center;gap:3px;cursor:pointer;}
+.bp-item:hover{color:var(--text-secondary);}
+
+/* ═══ RIGHT PANEL ═══ */
+.right-panel{display:none;width:var(--right-panel-w);flex-shrink:0;background:var(--bg-panel);border-left:1px solid var(--border);flex-direction:column;transition:background .2s;}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border);font-size:12px;}
+.rp-tab{flex:1;text-align:center;padding:8px;color:var(--text-muted);cursor:pointer;transition:all .12s;}
+.rp-tab:hover{color:var(--text-secondary);}
+.rp-tab.active{color:var(--text-primary);font-weight:500;border-bottom:2px solid var(--accent);margin-bottom:-1px;}
+.rp-header{display:flex;align-items:center;justify-content:flex-end;padding:4px 8px;gap:4px;border-bottom:1px solid var(--border-light);}
+.rp-tree{flex:1;overflow-y:auto;padding:4px 0;}
+.rp-item{display:flex;align-items:center;gap:5px;padding:3px 8px;font-size:12px;color:var(--text-secondary);cursor:pointer;white-space:nowrap;}
+.rp-item:hover{background:var(--bg-hover);}
+.rp-item.active{background:var(--accent-bg);color:var(--accent);}
+.rp-icon-wrap{display:flex;align-items:center;color:var(--text-muted);}
+.rp-dot{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0;}
+
+/* ═══ WELCOME ═══ */
+.welcome-view{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;max-width:720px;margin:0 auto;width:100%;}
+.welcome-logo{width:120px;height:120px;margin-bottom:24px;opacity:.12;color:var(--text-muted);}
+.welcome-title{font-size:24px;font-weight:700;color:var(--text-bright);margin-bottom:4px;}
+.welcome-subtitle{font-size:13px;color:var(--text-secondary);margin-bottom:28px;text-align:center;line-height:1.7;}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;}
+.feature-card{background:var(--bg-surface);padding:14px;cursor:pointer;transition:background .12s;}
+.feature-card:hover{background:var(--bg-elevated);}
+.fc-badge{display:inline-block;font-size:9px;font-weight:600;padding:1px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
+.fc-title{font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:3px;}
+.fc-desc{font-size:11px;color:var(--text-secondary);line-height:1.5;}
+
+/* ═══ DETAIL VIEW ═══ */
+.detail-view{max-width:700px;margin:0 auto;padding:28px 32px;width:100%;}
+.dv-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px;}
+.dv-title{font-size:22px;font-weight:700;color:var(--text-bright);margin-bottom:6px;}
+.dv-desc{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px;}
+.screenshot-wrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:16px;}
+
+/* ═══ HTML SIMULATIONS ═══ */
+.sim{background:var(--bg-surface);border-radius:var(--radius);border:1px solid var(--border);font-size:12px;overflow:hidden;position:relative;}
+.sim-titlebar{display:flex;align-items:center;padding:6px 10px;background:var(--bg-elevated);border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);gap:8px;}
+.sim-dots{display:flex;gap:5px;}.sim-dots span{width:9px;height:9px;border-radius:50%;}.sim-dots .r{background:#ff5f57;}.sim-dots .y{background:#ffbd2e;}.sim-dots .g{background:#28c840;}
+.sim-body{display:flex;min-height:220px;}
+.sim-sidebar{width:140px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);padding:8px 0;display:flex;flex-direction:column;}
+.sim-sidebar .sim-btn{margin:0 8px 6px;padding:5px;text-align:center;border:1px solid var(--border);border-radius:4px;background:var(--bg-input);font-size:10px;color:var(--text-primary);}
+.sim-sidebar .sim-section{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);padding:8px 10px 3px;}
+.sim-sidebar .sim-menu-item{display:flex;align-items:center;gap:5px;padding:3px 10px;font-size:11px;color:var(--text-primary);cursor:default;}
+.sim-sidebar .sim-menu-item.sel{background:var(--accent-bg);color:var(--accent);border-left:2px solid var(--accent);padding-left:8px;}
+.sim-sidebar .sim-badge{margin-left:auto;font-size:9px;color:var(--text-muted);background:var(--bg-elevated);padding:0 4px;border-radius:6px;}
+.sim-sidebar .sim-footer{margin-top:auto;border-top:1px solid var(--border);padding:6px 10px;font-size:10px;color:var(--text-muted);}
+.sim-center{flex:1;display:flex;flex-direction:column;padding:0;}
+.sim-center .sim-tabs{display:flex;gap:12px;padding:5px 12px;font-size:10px;color:var(--text-muted);border-bottom:1px solid var(--border-light);}
+.sim-center .sim-tabs .active{color:var(--text-primary);font-weight:500;}
+.sim-center .sim-exec{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 12px;}
+.sim-toggle{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;font-size:10px;}
+.sim-toggle span{padding:2px 10px;background:var(--bg-input);color:var(--text-secondary);}
+.sim-toggle span.on{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+.sim-canvas{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-placeholder);font-size:10px;}
+.sim-prompt{border-top:1px solid var(--border);padding:6px 10px;}
+.sim-prompt-bar{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;background:var(--bg-input);font-size:10px;color:var(--text-secondary);}
+.sim-prompt-bar .send{margin-left:auto;color:var(--text-muted);}
+.sim-below{display:flex;gap:8px;padding:3px 10px 0;font-size:9px;color:var(--text-muted);}
+
+/* Customization dialog simulation */
+.sim-dialog{display:flex;min-height:200px;}
+.sim-dialog .sim-dlg-nav{width:120px;flex-shrink:0;border-right:1px solid var(--border);padding:6px 0;}
+.sim-dialog .sim-dlg-nav .sim-dlg-item{display:flex;align-items:center;gap:4px;padding:3px 8px;font-size:10px;color:var(--text-primary);cursor:default;}
+.sim-dialog .sim-dlg-nav .sim-dlg-item.sel{color:var(--accent);font-weight:600;}
+.sim-dialog .sim-dlg-nav .sim-dlg-badge{margin-left:auto;font-size:9px;color:var(--text-muted);background:var(--bg-elevated);padding:0 4px;border-radius:6px;}
+.sim-dialog .sim-dlg-content{flex:1;padding:10px;}
+.sim-dialog .sim-search{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--text-placeholder);background:var(--bg-input);margin-bottom:8px;}
+.sim-dialog .sim-new-btn{float:right;padding:3px 10px;border-radius:4px;background:var(--accent);color:#fff;font-size:9px;font-weight:600;margin-bottom:8px;}
+.sim-dialog .sim-section-hdr{font-size:10px;color:var(--text-secondary);margin:6px 0 4px;display:flex;align-items:center;gap:4px;}
+.sim-dialog .sim-section-hdr::before{content:'\25BE';font-size:8px;}
+.sim-dialog .sim-dlg-file{padding:4px 8px 4px 16px;font-size:11px;color:var(--text-primary);}
+.sim-dialog .sim-dlg-file-desc{font-size:9px;color:var(--text-muted);padding:0 8px 6px 16px;}
+.sim-dialog .sim-dlg-footer{margin-top:auto;border-top:1px solid var(--border);padding:6px 10px;font-size:9px;color:var(--text-muted);}
+.sim-dialog .sim-dlg-footer a{color:var(--accent);text-decoration:none;}
+.ss-badge{position:absolute;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;cursor:pointer;z-index:5;transform:translate(-50%,-50%);transition:transform .15s,box-shadow .15s;box-shadow:0 1px 4px rgba(0,0,0,.25);}
+.ss-badge:hover{transform:translate(-50%,-50%) scale(1.4);z-index:10;}
+.md-content h2{font-size:16px;font-weight:700;color:var(--text-bright);margin:20px 0 8px;}
+.md-content h3{font-size:14px;font-weight:600;color:var(--text-bright);margin:16px 0 6px;}
+.md-content p{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:8px;}
+.md-content ul{padding-left:18px;margin-bottom:8px;}
+.md-content li{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:2px;}
+.md-content li::marker{color:var(--text-muted);}
+.md-content code{background:var(--bg-elevated);padding:1px 5px;border-radius:3px;font-family:var(--font-mono);font-size:12px;color:var(--accent);}
+.md-content strong{color:var(--text-bright);}
+.md-content table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:12px;}
+.md-content th{text-align:left;padding:6px 10px;font-weight:600;color:var(--text-bright);background:var(--bg-elevated);border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px;}
+.md-content td{padding:6px 10px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);}
+.md-content .code-block{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin:10px 0 16px;overflow:hidden;}
+.md-content .cb-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:var(--bg-elevated);border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);font-family:var(--font-mono);}
+.md-content .cb-copy{font-size:10px;cursor:pointer;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-secondary);font-family:var(--font-ui);transition:all .15s;}
+.md-content .cb-copy:hover{background:var(--bg-hover);color:var(--text-primary);}
+.md-content .cb-body{padding:10px 14px;font-family:var(--font-mono);font-size:12px;line-height:1.7;white-space:pre-wrap;color:var(--text-primary);overflow-x:auto;}
+.related-section{margin-top:20px;}
+.related-section h4{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border-light);}
+.related-link{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .1s;}
+.related-link:hover{background:var(--bg-hover);color:var(--text-primary);}
+.rl-badge{font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;text-transform:uppercase;}
+.tip{position:fixed;z-index:200;background:var(--bg-modal);border:1px solid var(--border);color:var(--text-bright);padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;max-width:260px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.15);opacity:0;transition:opacity .12s;line-height:1.5;}
+[data-theme="dark"] .tip{box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.tip.show{opacity:1;}.tip b{display:block;margin-bottom:2px;color:var(--text-bright);}
+@media(max-width:900px){.right-panel{display:none;}.sidebar{width:200px;}}
+@media(max-width:640px){.sidebar{position:fixed;left:0;top:40px;bottom:0;z-index:50;width:250px;transform:translateX(-100%);transition:transform .25s;box-shadow:4px 0 20px rgba(0,0,0,.15);}.sidebar.open{transform:translateX(0);}.mobile-btn{display:flex!important;}.backdrop{display:none;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.3);}.backdrop.show{display:block;}}
+.mobile-btn{display:none!important;align-items:center;justify-content:center;width:24px;height:24px;cursor:pointer;color:var(--text-muted);font-size:16px;border-radius:3px;}.mobile-btn:hover{background:var(--bg-hover);}
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <span class="mobile-btn" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('backdrop').classList.toggle('show');"><svg class="ico" viewBox="0 0 16 16"><path d="M2 3.5C2 3.224 2.224 3 2.5 3H13.5C13.776 3 14 3.224 14 3.5S13.776 4 13.5 4H2.5C2.224 4 2 3.776 2 3.5ZM2 7.5C2 7.224 2.224 7 2.5 7H13.5C13.776 7 14 7.224 14 7.5S13.776 8 13.5 8H2.5C2.224 8 2 7.776 2 7.5ZM2 11.5C2 11.224 2.224 11 2.5 11H13.5C13.776 11 14 11.224 14 11.5S13.776 12 13.5 12H2.5C2.224 12 2 11.776 2 11.5Z"/></svg></span>
+  <div style="flex:1;"></div>
+  <div class="theme-btn" onclick="toggleTheme()">
+    <svg id="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span id="theme-lbl">Light</span>
+  </div>
+</div>
+
+<div class="app-body">
+  <div class="sidebar" id="sidebar">
+    <div class="new-session-btn" onclick="showWelcome()">New Session</div>
+    <div class="session-section">
+      <div class="session-section-header"><span>LAST 7 DAYS</span><span>1</span></div>
+      <div class="session-item active" onclick="showWelcome()"><span class="session-dot"></span> Explore Sessions App</div>
+    </div>
+    <div class="custom-label">Customizations</div>
+    <div class="custom-menu" id="menu-items"></div>
+    <div class="sidebar-footer">
+      <div class="sf-avatar"><svg class="ico" viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2ZM1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8Zm7 4.25c1.933 0 3.5-1.214 3.5-3.036 0-.671-.544-1.214-1.214-1.214H5.715c-.671 0-1.214.544-1.214 1.214C4.501 11.035 6.068 12.25 8 12.25ZM8 7.25a1.875 1.875 0 1 0 0-3.75 1.875 1.875 0 0 0 0 3.75Z"/></svg></div>
+      avia (GitHub)
+    </div>
+  </div>
+  <div class="backdrop" id="backdrop" onclick="document.getElementById('sidebar').classList.remove('open');this.classList.remove('show');"></div>
+
+  <div class="center-panel">
+    <div class="exec-bar">
+      <div class="mode-toggle"><div class="mode-btn active">Local</div><div class="mode-btn">Cloud</div></div>
+      <div class="downloads-pick"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"/></svg> My project <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+    </div>
+    <div class="canvas-content" id="canvas"></div>
+    <div class="prompt-area">
+      <div class="prompt-bar">
+        <div class="pb-el"><svg class="ico" viewBox="0 0 16 16"><path d="M8 1.5a.5.5 0 0 0-1 0V7H1.5a.5.5 0 0 0 0 1H7v5.5a.5.5 0 0 0 1 0V8h5.5a.5.5 0 0 0 0-1H8V1.5Z"/></svg></div>
+        <div class="pb-el"><svg class="ico-sm" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1"/><path d="M5.5 5.5C5.5 5.5 6.5 4 8 4s2.5 1.5 2.5 1.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><path d="M5.5 10.5C5.5 10.5 6.5 12 8 12s2.5-1.5 2.5-1.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="8" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg> Agent <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+        <div class="pb-el">Claude Sonnet 4.6 <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+        <div class="pb-send"><svg class="ico" viewBox="0 0 16 16"><path d="M1.177 1.119a.5.5 0 0 1 .547-.066l13 6.5a.5.5 0 0 1 0 .894l-13 6.5a.5.5 0 0 1-.701-.894L3.87 8.5H9.5a.5.5 0 0 0 0-1H3.87L1.023 1.648a.5.5 0 0 1 .154-.529Z"/></svg></div>
+      </div>
+      <div class="below-prompt">
+        <div class="bp-item"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"/></svg> Folder <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+        <div class="bp-item"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M12 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" transform="scale(.75) translate(2.5 2.5)"/><path d="M12 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fill="none" stroke="currentColor" stroke-width=".75" transform="scale(.55) translate(5.8 5.8)"/></svg> Default Approvals <svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="rp-tabs"><div class="rp-tab">Changes</div><div class="rp-tab active">Files</div></div>
+    <div class="rp-header"><span class="tb-icon" style="width:20px;height:20px;"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M8 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm-1 3a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"/></svg></span><span class="tb-icon" style="width:20px;height:20px;"><svg class="ico-sm" viewBox="0 0 16 16"><path d="M2.589 2.716l.057-.071a.5.5 0 0 1 .638-.058l.069.058L8 7.293l4.646-4.647a.5.5 0 0 1 .708.708L8.707 8l4.647 4.646a.5.5 0 0 1-.708.708L8 8.707l-4.646 4.647a.5.5 0 0 1-.708-.708L7.293 8 2.646 3.354a.5.5 0 0 1-.057-.638Z"/></svg></span></div>
+    <div class="rp-tree" id="rp-tree"></div>
+  </div>
+</div>
+
+<div class="tip" id="tip"><b></b><span></span></div>
+
+<script>
+/* ═══ SVG ICON FRAGMENTS ═══ */
+const ICO = {
+  agents: '<svg class="ico" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1"/><path d="M6 4.5C6 4.5 5 6 5 8s1 3.5 1 3.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><path d="M10 4.5C10 4.5 11 6 11 8s-1 3.5-1 3.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="6.5" y1="4" x2="9.5" y2="12" stroke="currentColor" stroke-width="1"/></svg>',
+  lightbulb: '<svg class="ico" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.156 4.702a5.006 5.006 0 0 0-.974-1.417A5.007 5.007 0 0 0 8 2c-.589-.004-1.172.11-1.716.335a5.007 5.007 0 0 0-2.784 6.7l.229.963.471 1.978L5.945 13a1.492 1.492 0 0 0 1.417 1h1.404a1.492 1.492 0 0 0 1.321-1.118l.494-1.118.306-1.168a5.043 5.043 0 0 0 1.769-5.894ZM9.118 12.628v.013a.493.493 0 0 1-.15.253.494.494 0 0 1-.268.119H7.361a.494.494 0 0 1-.3-.1.494.494 0 0 1-.161-.2L6.733 12h2.549l-.164.628ZM11.104 7.941a4.035 4.035 0 0 1-1.004 1.251l-.108.1-.449 1.709h-3.05l-.348-1.464-.1-.1a4.034 4.034 0 0 1-.545-2.88 4.035 4.035 0 0 1 1.043-2.543A4.007 4.007 0 0 1 8 3a4.007 4.007 0 0 1 2.486 1 4.007 4.007 0 0 1 1.118 3.941Z"/></svg>',
+  book: '<svg class="ico" viewBox="0 0 16 16"><path d="M2.5 2A1.5 1.5 0 0 0 1 3.5v9A1.5 1.5 0 0 0 2.5 14H6c.818 0 1.544-.393 2-.999.456.607 1.182 1 2 1h3.5a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 13.5 2H10c-.818 0-1.544.393-2 1a2.496 2.496 0 0 0-2-1H2.5ZM7.5 4.5v7A1.5 1.5 0 0 1 6 13H2.5a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5H6a1.5 1.5 0 0 1 1.5 1.5Zm1 7v-7A1.5 1.5 0 0 1 10 3h3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5H10a1.5 1.5 0 0 1-1.5-1.5Z"/></svg>',
+  comment: '<svg class="ico" viewBox="0 0 16 16"><path d="M14.56 7.44A1.494 1.494 0 0 0 13.5 7H13V4c0-1.1-.9-2-2-2H3C1.9 2 1 2.9 1 4v5c0 1.1.9 2 2 2v1c0 .82.93 1.29.59.81L7 11.05v.45c0 .4.16.78.44 1.06.28.28.66.44 1.06.44h1.79l1.86 1.85a.5.5 0 0 0 .85-.35V13h.5c.4 0 .78-.16 1.06-.44.28-.28.44-.66.44-1.06v-3a1.494 1.494 0 0 0-.44-1.06ZM6.75 10L4 12v-2H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3H8.5c-.4 0-.78.16-1.06.44-.28.28-.44.66-.44 1.06v1.5h-.25ZM14 11.5a.5.5 0 0 1-.5.5h-1a.5.5 0 0 0-.5.5v.79l-1.15-1.14a.5.5 0 0 0-.35-.15H8.5a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v3Z"/></svg>',
+  zap: '<svg class="ico" viewBox="0 0 16 16"><path d="M9 1L3 9h4l-1 6 6-8H8l1-6Z" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>',
+  server: '<svg class="ico" viewBox="0 0 16 16"><path d="M12 11.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm0-4a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM14 4.5a1.5 1.5 0 0 1-.39 1 1.5 1.5 0 0 1 .39 1v2a1.5 1.5 0 0 1-.39 1 1.5 1.5 0 0 1 .39 1v2a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-2a1.5 1.5 0 0 1 .39-1 1.5 1.5 0 0 1-.39-1v-2a1.5 1.5 0 0 1 .39-1A1.5 1.5 0 0 1 2 4.5v-2A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5v2ZM3 4.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v2Zm9.5 1.5h-9a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5ZM13 10.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-2Zm-1.5-7a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/></svg>',
+  plug: '<svg class="ico" viewBox="0 0 16 16"><path d="M10.723 4H10V1.5a.5.5 0 0 0-1 0V4H7V1.5a.5.5 0 0 0-1 0V4h-.723A1.278 1.278 0 0 0 4 5.278V8c0 2.036 1.529 3.722 3.5 3.969V14.5a.5.5 0 0 0 1 0v-2.531C10.471 11.722 12 10.037 12 8V5.278C12 4.573 11.427 4 10.723 4ZM11 8a3 3 0 0 1-6 0V5.278A.278.278 0 0 1 5.277 5h5.445a.278.278 0 0 1 .277.278V8Z"/></svg>',
+  folder: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"/></svg>',
+  file: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M5 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5.414a1.5 1.5 0 0 0-.44-1.06L9.647 1.44A1.5 1.5 0 0 0 8.586 1H5ZM4 3a1 1 0 0 1 1-1h3v2.5A1.5 1.5 0 0 0 9.5 6H12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3Zm7.793 2H9.5a.5.5 0 0 1-.5-.5V2.207L11.793 5Z"/></svg>',
+  chevron: '<svg class="ico-sm" viewBox="0 0 16 16"><path d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z" transform="rotate(-90 8 8)"/></svg>',
+  logo: '<svg viewBox="0 0 120 100" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><polygon points="50,8 16,28 16,72 50,92 50,52" fill="currentColor" opacity=".08" stroke="currentColor"/><polygon points="50,8 50,52 16,28" fill="currentColor" opacity=".04"/><polygon points="16,72 50,92 50,52" fill="currentColor" opacity=".04"/><line x1="16" y1="28" x2="50" y2="52"/><line x1="16" y1="72" x2="50" y2="52"/><polygon points="70,8 104,28 104,72 70,92 70,52" fill="currentColor" opacity=".08" stroke="currentColor"/><polygon points="70,8 70,52 104,28" fill="currentColor" opacity=".04"/><polygon points="104,72 70,92 70,52" fill="currentColor" opacity=".04"/><line x1="104" y1="28" x2="70" y2="52"/><line x1="104" y1="72" x2="70" y2="52"/></svg>',
+};
+
+/* ═══ DATA ═══ */
+const BADGE_COLORS={sidebar:{label:"Sidebar",bg:"var(--badge-teal)"},config:{label:"Config",bg:"var(--badge-gold)"},exec:{label:"Execution",bg:"var(--badge-green)"},input:{label:"Input",bg:"var(--badge-purple)"},modal:{label:"Modal",bg:"var(--badge-rust)"},files:{label:"Files",bg:"var(--badge-blue)"},session:{label:"Session",bg:"var(--accent)"}};
+function bc(cat){const c=BADGE_COLORS[cat];return c?`background:${c.bg}18;color:${c.bg};`:``;}
+function bcSolid(cat){const c=BADGE_COLORS[cat];return c?c.bg:'var(--accent)';}
+
+const MENU=[
+  {id:"agents",icon:"agents",label:"Agents",badge:null,cat:"config",title:"Agents",
+   desc:"Define custom AI agent personas with specific instructions, model choices (Claude, Copilot, Codex), and tool permissions.",
+   content:`## What Are Agents?\n\nAgents are custom AI personas you configure in the Sessions app. Each agent has:\n\n- **Model** \u2014 Which AI model powers it (Claude Sonnet 4.6, Copilot, Codex)\n- **Instructions** \u2014 System prompt defining behavior and expertise\n- **Permissions** \u2014 What tools and filesystem access the agent has\n- **Skills** \u2014 Which skill bundles are attached\n\n## The Chat Customizations Dialog\n\nClicking **Agents** opens the **Chat Customizations** dialog. The center area shows a **search bar**, collapsible sections for **Built-In** and **Custom** agents, and a coral **"+ New Agent (Workspace)"** button with a dropdown for **"New Agent (User)"**.\n\n## Example Configurations\n\n| Agent | Model | Access | Purpose |\n|-------|-------|--------|---------|\n| Security Reviewer | Claude Sonnet 4.6 | Read-only | Audit code for OWASP vulnerabilities |\n| Feature Builder | Copilot | Full access | Implement features with tests |\n| Docs Writer | Claude Opus 4.6 | Read + write docs/ | Generate documentation |\n\n## Workspace vs User Scope\n\n- **Workspace** \u2014 Stored in \`.github/agents/\`, committed to the repo, shared with team\n- **User** \u2014 Personal, stays local, not version controlled\n\n## Multi-Agent Orchestration\n\nRun multiple agents in parallel across sessions. A Plan agent can break tasks into subtasks and delegate each to a specialized execution agent.`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:7.5,tip:"Agents section in Chat Customizations"}]},
+  {id:"skills",icon:"lightbulb",label:"Skills",badge:"2",cat:"config",title:"Skills",
+   desc:"Reusable capability bundles attached to agents. Examples: 'write tests', 'documentation', 'security review'.",
+   content:`## What Are Skills?\n\nSkills are reusable instruction bundles that give agents specific capabilities.\n\n## The Chat Customizations Dialog \u2014 Skills View\n\nThe screenshot shows the actual UI:\n\n- **Left nav**: Agents, **Skills** (selected, badge **2**), Instructions, Prompts (6), Hooks, MCP Servers (1), Plugins\n- **Search bar**: "Type to search..." at the top\n- **"+ New Skill (Workspace)"** button (coral) with dropdown for **"New Skill (User)"**\n- **Built-In** section showing:\n  - **Commit** \u2014 AI-generated commit messages matching repo style\n  - **Update Skills** \u2014 Auto-saves learnings from sessions\n- **Bottom**: Description + coral "Learn more about agent skills" link\n\n## Skill File Structure\n\n\`\`\`yaml\nname: "write-tests"\ndescription: "Generate tests matching project conventions"\n\`\`\`\n\n\`\`\`markdown\n# Skill: Write Tests\n\n## Overview\nAnalyze the target code and generate comprehensive test suites.\n\n## Best Practices\n- Match the existing test framework (Jest, Vitest, pytest)\n- Cover happy path, edge cases, and error scenarios\n- Use descriptive test names\n\`\`\`\n\n## Workspace vs User\n\n- **Workspace** \u2014 Stored in \`.github/skills/\`, shared with team\n- **User** \u2014 Personal, local only`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:10.5,tip:"Skills (selected) \u2014 badge shows count"},{x:88,y:8,tip:'"+ New Skill (Workspace)" button'},{x:15,y:17,tip:"Built-In: Commit and Update Skills"}]},
+  {id:"instructions",icon:"book",label:"Instructions",badge:null,cat:"config",title:"Instructions",
+   desc:"Persistent system-level instructions injected into every session \u2014 your global system prompt.",
+   content:`## Global Instructions\n\nInstructions are system-level prompts applied to **every session**, regardless of which agent is active.\n\n## The Chat Customizations Dialog\n\nClicking **Instructions** opens the same dialog. Create with **"+ New Instruction (Workspace)"** or **"New Instruction (User)"**. Stored in \`.github/instructions/\`.\n\n## Instruction File Structure\n\n\`\`\`yaml\nname: "coding-standards"\ndescription: "Enforce team coding conventions across all sessions"\n\`\`\`\n\n\`\`\`markdown\n# Instruction: Coding Standards\n\n## Overview\nRules that every agent must follow regardless of persona.\n\n## Standards\n- Always follow the project's existing code style\n- Use TypeScript strict mode\n- Prefer functional components over class components\n- Write JSDoc comments for all exported functions\n- Never commit directly to main\n\`\`\`\n\n## Instructions vs Agent Instructions\n\n| | Global Instructions | Agent Instructions |\n|---|---|---|\n| Scope | All sessions, all agents | One specific agent |\n| Purpose | Team coding standards | Agent persona/expertise |`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:13,tip:"Instructions in Chat Customizations"}]},
+  {id:"prompts",icon:"comment",label:"Prompts",badge:"6",cat:"config",title:"Prompts",
+   desc:"Saved prompt templates for quick invocation. Badge count shows configured templates.",
+   content:`## Saved Prompts\n\nPrompts are reusable templates you invoke with one click.\n\n## Prompt File Structure\n\n\`\`\`yaml\nname: "refactor-component"\ndescription: "Structured component refactoring workflow"\n\`\`\`\n\n\`\`\`markdown\n# Prompt: Refactor Component\n\n## Template\nRefactor the {{component}} component:\n1. Extract shared logic into custom hooks\n2. Split into smaller sub-components\n3. Add TypeScript types for all props\n4. Ensure all existing tests still pass\n5. Update imports across the codebase\n\n## Usage Notes\nFill in {{variables}} before sending.\n\`\`\`\n\n## Workspace vs User\n\n- **Workspace** \u2014 Stored in \`.github/prompts/\`, shared\n- **User** \u2014 Personal, local only\n\n## Use Cases\n\n- Structured refactoring workflows\n- Bug investigation checklists\n- Code review request templates`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:16,tip:"Prompts (6) \u2014 badge shows count"}]},
+  {id:"hooks",icon:"zap",label:"Hooks",badge:null,cat:"config",title:"Hooks",
+   desc:"Event-driven automation triggers that fire before or after specific agent actions.",
+   content:`## What Are Hooks?\n\nHooks intercept agent actions. They fire **before** or **after** specific events.\n\n## Hook File Structure\n\n\`\`\`yaml\nname: "pre-commit-lint"\ndescription: "Run linter before every agent commit"\n\`\`\`\n\n\`\`\`yaml\n# Hook: Pre-Commit Lint\nevent: before-commit\ncommand: npm run lint -- --fix\non-failure: block-and-report\n\`\`\`\n\n## Available Events\n\n| Event | When It Fires |\n|-------|---------------|\n| before-file-write | Before agent writes a file |\n| after-file-write | After agent writes a file |\n| before-commit | Before agent makes a git commit |\n| before-tool-call | Before agent invokes an MCP tool |\n| session-end | When a session is archived or closed |\n\n## Use Cases\n\n- Auto-format code after writes\n- Run tests before commits\n- Log all tool calls for auditing\n- Notify Slack when sessions complete`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:19.5,tip:"Hooks in Chat Customizations"}]},
+  {id:"mcp",icon:"server",label:"MCP Servers",badge:"1",cat:"config",title:"MCP Servers",
+   desc:"External tool integrations via Model Context Protocol. Connect agents to Atlassian, databases, APIs.",
+   content:`## Model Context Protocol\n\nMCP servers expose external tools that agents can call during sessions.\n\n## Configuration File Structure\n\n\`\`\`json\n{\n  "servers": [\n    {\n      "name": "atlassian",\n      "transport": "stdio",\n      "command": "npx",\n      "args": ["-y", "@anthropic/mcp-atlassian"],\n      "env": {\n        "JIRA_URL": "https://your-org.atlassian.net"\n      }\n    }\n  ]\n}\n\`\`\`\n\n## Common Integrations\n\n| Server | What It Provides |\n|--------|------------------|\n| Atlassian | Jira tickets, Confluence pages |\n| PostgreSQL | Database queries |\n| GitHub | Extended GitHub operations |\n| Slack | Channel messages, notifications |\n| Custom APIs | Any REST/GraphQL endpoint |\n\n## Best Practices\n\n- Store credentials in environment variables, never in the config file\n- Use \`stdio\` transport for local servers, \`http\` for remote\n- Test server connectivity before attaching to production sessions`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:22.5,tip:"MCP Servers (1) \u2014 badge shows count"}]},
+  {id:"plugins",icon:"plug",label:"Plugins",badge:null,cat:"config",title:"Plugins",
+   desc:"Installable workflow bundles combining agents + skills + prompts for specific job functions.",
+   content:`## What Are Plugins?\n\nPlugins are pre-packaged bundles that combine multiple components into one installable package.\n\n## A Plugin Contains\n\n- **Agent persona** \u2014 Specialized for the domain\n- **Skills** \u2014 Domain-specific capabilities\n- **Prompts** \u2014 Pre-built templates\n- **MCP connectors** \u2014 Required external tools\n\n## Available Plugins\n\n| Plugin | For |\n|--------|-----|\n| Financial Analysis | Finance teams \u2014 FactSet, Bloomberg |\n| Legal Contract Review | Legal departments |\n| HR Support | Human resources workflows |\n| Sales Workflows | CRM, outreach, pipeline |\n\n## Installation Sources\n\n- **Public marketplace** \u2014 Community plugins\n- **Enterprise marketplace** \u2014 Admin-provisioned, per-user\n- **Local files** \u2014 Custom internal plugins`,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:25.5,tip:"Plugins in Chat Customizations"}]},
+];
+
+const EXTRA_FEATURES=[
+  {id:"overview",cat:"session",title:"App Overview",desc:"The standalone VS Code Sessions app \u2014 a lightweight agent-focused editor, purpose-built for agent workflows.",
+   content:`## What Is VS Code Sessions?\n\n| | Agent Sessions (feature) | Sessions (standalone app) |\n|---|---|---|\n| What | Feature inside VS Code since v1.107 | Separate experimental application |\n| Released | November 2025 (GA) | Experimental / unreleased |\n| UI | Sidebar panel in full VS Code | Purpose-built minimal interface |\n\n## Why a Standalone App?\n\nThe standalone app strips away the file explorer, editor tabs, and extensions sidebar \u2014 leaving only:\n\n- Session management (create, archive, fork, export)\n- Agent configuration (the CUSTOMIZATIONS sidebar)\n- Prompt input + model selection\n- Execution mode toggle (Local / Cloud)\n- Filesystem scope control\n\n## Key Architecture\n\n- **Multi-agent orchestration** \u2014 Run Copilot, Claude, and Codex from one place\n- **Session handoff** \u2014 Local \u2192 background \u2192 cloud with preserved context\n- **Isolated worktrees** \u2014 Each session gets its own Git worktree\n\n## The Three Panels\n\n| Panel | Purpose |\n|-------|---------|\n| Left sidebar | Session list + CUSTOMIZATIONS config |\n| Center | Chat canvas + prompt bar + exec mode |\n| Right | Filesystem tree (local) or repo tree (cloud) |`},
+  {id:"local-cloud",cat:"exec",title:"Local / Cloud Execution",desc:"Local: private, fast, isolated Git worktrees. Cloud: GitHub infrastructure, autonomous PRs.",
+   content:`## Execution Modes\n\n## Local Mode\n\n| Property | Value |\n|----------|-------|\n| Runs on | Your machine |\n| Filesystem | Local disk + Git worktrees |\n| Privacy | Fully private |\n| Latency | Minimal |\n\n## Cloud Mode\n\n| Property | Value |\n|----------|-------|\n| Runs on | GitHub infrastructure |\n| Output | Pull requests, issues, comments |\n| Access | GitHub.com, Mobile, CLI, VS Code |\n\n## Session Handoff\n\n1. Brainstorm interactively with a local agent\n2. Refine the plan\n3. Hand off to a cloud agent for autonomous execution\n4. Full conversation context preserved at each transition`},
+  {id:"add-action",cat:"modal",title:"Add Action Modal",desc:"Configure named shell tasks tied to the session worktree lifecycle.",
+   content:`## Actions \u2014 Shell Tasks\n\n## Modal Fields\n\n| Field | Purpose |\n|-------|---------|\n| Name | Optional human-readable label |\n| Command | Any shell command: \`npm run dev\`, \`make build\` |\n| Auto-run | Run automatically when worktree is created |\n| Save In | Workspace (shared) or User (personal) |\n\n## Scope\n\n- **Workspace** \u2014 Committed to the repo, shared with team\n- **User** \u2014 Stays local, personal preference`},
+  {id:"prompt-bar",cat:"input",title:"Prompt Input Bar",desc:"Agent selector, model selector (Claude Sonnet 4.6, Copilot, Codex), folder picker, approval controls.",
+   content:`## Prompt Input Bar\n\n## Components\n\n| Element | Purpose |\n|---------|---------|\n| + Button | Add context, files, or attachments |\n| Agent dropdown | Select which agent handles this session |\n| Model selector | Choose AI model |\n| Send button | Submit prompt to the agent |\n| Folder picker | Set working directory |\n| Default Approvals | Control agent permission level |\n\n## Default Approvals\n\n| Action | Options |\n|--------|---------|\n| File reads | Usually auto-approved |\n| File writes | Configurable |\n| Terminal commands | Configurable |\n| Git operations | Recommended: ask first |`},
+  {id:"fs-panel",cat:"files",title:"Filesystem Tree Panel",desc:"Right-side panel showing the scoped project tree. Agent only sees the worktree root.",
+   content:`## Filesystem Panel\n\n## Scope Control\n\nThe agent can **only** see files within the worktree root. It cannot access your home directory, other projects, or system files.\n\n## Changes vs Files Tabs\n\n| Tab | Shows |\n|-----|-------|\n| Changes | Files modified by the agent |\n| Files | Full project tree within scope |`},
+  {id:"session-mgmt",cat:"session",title:"Session Management",desc:"Create, archive, rename, fork, filter, and export sessions.",
+   content:`## Managing Sessions\n\n| Operation | What it does |\n|-----------|--------------|\n| New Session | Fresh session with own context |\n| Archive | Save for later reference |\n| Rename | Descriptive name |\n| Fork | Branch the conversation |\n| Filter | Search through past sessions |\n| Export | Download as JSON |\n| Handoff | Transfer to background/cloud agent |\n\n## Session Handoff\n\nLocal (interactive) \u2192 Background (CLI agent) \u2192 Cloud (GitHub PR)`},
+  {id:"chat-customizations",cat:"config",title:"Chat Customizations Dialog",desc:"The full-screen configuration dialog with left nav, search, Built-In/Custom sections, Workspace/User scope.",
+   content:`## Chat Customizations Dialog\n\nClicking any item under **Customizations** opens this dialog.\n\n## Dialog Layout\n\n| Area | Contents |\n|------|---------|\n| Title bar | "Chat Customizations" + expand/close icons |\n| Left navigation | Agents, Skills (2), Instructions, Prompts (6), Hooks, MCP Servers (1), Plugins |\n| Top-right | Coral "+" button with dropdown |\n| Center | Search bar + collapsible sections |\n| Bottom | Description + coral "Learn more" link |\n\n## Workspace vs User Scope\n\n- **Workspace** \u2014 Stored in \`.github/\`, committed, shared\n- **User** \u2014 Personal, local only\n\n## File Storage in .github/\n\n\`\`\`\n.github/\n  agents/\n    security-reviewer.md\n    feature-builder.md\n  skills/\n    commit.md\n    update-skills.md\n  instructions/\n    coding-standards.md\n  prompts/\n    refactor-component.md\n  hooks/\n    pre-commit-lint.yaml\n  copilot-mcp.json\n  settings.json\n\`\`\``,
+   screenshot:true,screenshotImg:"customization.png",callouts:[{x:6,y:3,tip:"Chat Customizations title"},{x:6,y:10.5,tip:"Left nav \u2014 Skills selected"},{x:50,y:8,tip:"Search bar"},{x:88,y:8,tip:'"+ New" button with scope dropdown'},{x:20,y:17,tip:"Commit \u2014 built-in skill"},{x:20,y:23,tip:"Update Skills \u2014 built-in skill"},{x:50,y:97,tip:'"Learn more" link'},{x:6,y:98,tip:"My project folder"}]},
+  {id:"annotated",cat:"session",title:"Annotated Screenshot",desc:"Interactive annotated screenshot with numbered badges.",content:"__SCREENSHOT__"},
+];
+
+const ALL_ITEMS=[...MENU,...EXTRA_FEATURES];
+let selectedMenuId=null;
+
+/* ═══ RENDER SIDEBAR MENU ═══ */
+(function(){
+  const c=document.getElementById('menu-items');
+  MENU.forEach(m=>{
+    const d=document.createElement('div');d.className='menu-item';d.dataset.id=m.id;
+    d.innerHTML=`<span class="mi-icon">${ICO[m.icon]||''}</span><span>${m.label}</span>${m.badge?`<span class="mi-badge">${m.badge}</span>`:''}`;
+    d.addEventListener('click',()=>selectMenuItem(m.id));c.appendChild(d);
+  });
+})();
+function selectMenuItem(id){
+  document.querySelectorAll('.menu-item').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));
+  selectedMenuId=id;const item=ALL_ITEMS.find(i=>i.id===id);if(item)showDetail(item);
+}
+
+/* ═══ RIGHT PANEL ═══ */
+(function(){
+  const tree=document.getElementById('rp-tree');
+  const items=[
+    {name:"My project",type:"root",indent:0},
+    {name:".github",type:"dir",indent:1},
+    {name:"agents",type:"dir",indent:2},
+    {name:"security-reviewer.md",type:"file",indent:3,dot:"var(--badge-green)"},
+    {name:"feature-builder.md",type:"file",indent:3,dot:"var(--badge-green)"},
+    {name:"skills",type:"dir",indent:2},
+    {name:"commit.md",type:"file",indent:3},
+    {name:"update-skills.md",type:"file",indent:3},
+    {name:"write-tests.md",type:"file",indent:3,dot:"var(--badge-green)"},
+    {name:"instructions",type:"dir",indent:2},
+    {name:"coding-standards.md",type:"file",indent:3,dot:"var(--badge-green)"},
+    {name:"prompts",type:"dir",indent:2},
+    {name:"refactor-component.md",type:"file",indent:3},
+    {name:"hooks",type:"dir",indent:2},
+    {name:"pre-commit-lint.yaml",type:"file",indent:3},
+    {name:"copilot-mcp.json",type:"file",indent:2,dot:"var(--badge-rust)"},
+    {name:"settings.json",type:"file",indent:2,dot:"var(--badge-rust)"},
+  ];
+  items.forEach(it=>{
+    const d=document.createElement('div');d.className='rp-item'+(it.type==='root'?' active':'');
+    d.style.paddingLeft=(8+it.indent*14)+'px';
+    const icon=it.type==='dir'||it.type==='root'?ICO.folder:ICO.file;
+    d.innerHTML=`<span class="rp-icon-wrap">${icon}</span><span>${it.name}</span>${it.dot?`<span class="rp-dot" style="background:${it.dot};"></span>`:''}`;
+    tree.appendChild(d);
+  });
+})();
+
+/* ═══ WELCOME ═══ */
+function showWelcome(){
+  selectedMenuId=null;document.querySelectorAll('.menu-item').forEach(el=>el.classList.remove('selected'));
+  const canvas=document.getElementById('canvas');
+  const cards=ALL_ITEMS.filter(i=>i.id!=='annotated').map(item=>{
+    const c=BADGE_COLORS[item.cat];
+    return `<div class="feature-card" data-id="${item.id}"><div class="fc-badge" style="${bc(item.cat)}">${c?.label||''}</div><div class="fc-title">${item.title}</div><div class="fc-desc">${item.desc.slice(0,90)}${item.desc.length>90?'...':''}</div></div>`;
+  }).join('');
+  canvas.innerHTML=`<div class="welcome-view">
+    <div class="welcome-logo">${ICO.logo}</div>
+    <div class="welcome-title">Explore VS Code Sessions</div>
+    <div class="welcome-subtitle">Learn the standalone Sessions app by exploring its features.<br>Click a feature card below, or browse the sidebar menu items.</div>
+    <div class="feature-grid">${cards}</div></div>`;
+  canvas.querySelectorAll('.feature-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      const id=card.dataset.id;const mi=MENU.find(m=>m.id===id);
+      if(mi)selectMenuItem(id);else{const it=ALL_ITEMS.find(i=>i.id===id);if(it)showDetail(it);}
+    });
+  });canvas.scrollTop=0;
+}
+
+/* ═══ DETAIL VIEW ═══ */
+function showDetail(item){
+  const canvas=document.getElementById('canvas');
+  if(item.content==='__SCREENSHOT__'){showScreenshot(canvas);return;}
+  const c=BADGE_COLORS[item.cat];const rendered=renderMD(item.content||'');
+  const related=ALL_ITEMS.filter(i=>i.cat===item.cat&&i.id!==item.id&&i.id!=='annotated');
+  let ssHTML='';
+  if(item.screenshot){
+    ssHTML = item.screenshotImg==='customization.png' ? buildCustomizationSim(item) : '';
+  }
+  canvas.innerHTML=`<div class="detail-view">
+    ${c?`<div class="dv-badge" style="${bc(item.cat)}">${c.label}</div>`:''}
+    <div class="dv-title">${item.title}</div><div class="dv-desc">${item.desc}</div>
+    ${ssHTML}<div class="md-content">${rendered}</div>
+    ${related.length?`<div class="related-section"><h4>Related Features</h4>${related.map(r=>`<div class="related-link" data-id="${r.id}"><span class="rl-badge" style="${bc(r.cat)}">${BADGE_COLORS[r.cat]?.label||''}</span>${r.title}</div>`).join('')}</div>`:''}
+  </div>`;
+  canvas.querySelectorAll('.related-link').forEach(rl=>{rl.addEventListener('click',()=>{
+    const id=rl.dataset.id;const mi=MENU.find(m=>m.id===id);if(mi)selectMenuItem(id);else{const it=ALL_ITEMS.find(i=>i.id===id);if(it)showDetail(it);}
+  });});
+  setupBadgeTips(canvas);
+  canvas.querySelectorAll('.cb-copy').forEach(btn=>{btn.addEventListener('click',()=>{
+    const t=btn.closest('.code-block').querySelector('.cb-body').textContent;
+    navigator.clipboard.writeText(t).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);});
+  });});
+  canvas.scrollTop=0;
+}
+
+/* ═══ HTML SIMULATION BUILDERS ═══ */
+function buildAppSim(){
+  return `<div class="sim">
+    <div class="sim-titlebar"><div class="sim-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span style="flex:1;text-align:center;">New Session &middot; Downloads</span></div>
+    <div class="sim-body">
+      <div class="sim-sidebar">
+        <div class="sim-btn">New Session</div>
+        <div class="sim-section">Last 7 days</div>
+        <div class="sim-menu-item" style="font-size:10px;color:var(--text-muted);padding:2px 10px;">1 session</div>
+        <div class="sim-section">Customizations</div>
+        <div class="sim-menu-item">${ICO.agents} Agents</div>
+        <div class="sim-menu-item">${ICO.lightbulb} Skills <span class="sim-badge">2</span></div>
+        <div class="sim-menu-item">${ICO.book} Instructions</div>
+        <div class="sim-menu-item">${ICO.comment} Prompts <span class="sim-badge">6</span></div>
+        <div class="sim-menu-item">${ICO.zap} Hooks</div>
+        <div class="sim-menu-item">${ICO.server} MCP Servers <span class="sim-badge">1</span></div>
+        <div class="sim-menu-item">${ICO.plug} Plugins</div>
+        <div class="sim-footer">${ICO.file} avia (GitHub)</div>
+      </div>
+      <div class="sim-center">
+        <div class="sim-exec"><div class="sim-toggle"><span class="on">Local</span><span>Cloud</span></div><span style="font-size:10px;color:var(--text-muted);">${ICO.folder} My project</span></div>
+        <div class="sim-canvas"><svg viewBox="0 0 60 60" width="48" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="30,5 52,17 52,43 30,55 8,43 8,17"/><line x1="30" y1="5" x2="30" y2="55"/></svg></div>
+        <div class="sim-prompt"><div class="sim-prompt-bar"><span>+</span> <span>${ICO.agents} Agent</span> <span>Claude Sonnet 4.6</span> <span class="send">${ICO.file}</span></div></div>
+        <div class="sim-below"><span>${ICO.folder} Folder</span><span>Default Approvals</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildCustomizationSim(item){
+  const highlight = item?.id || 'skills';
+  const navItems = [
+    {id:'agents',label:'Agents',ico:ICO.agents},
+    {id:'skills',label:'Skills',ico:ICO.lightbulb,badge:'2'},
+    {id:'instructions',label:'Instructions',ico:ICO.book},
+    {id:'prompts',label:'Prompts',ico:ICO.comment,badge:'6'},
+    {id:'hooks',label:'Hooks',ico:ICO.zap},
+    {id:'mcp',label:'MCP Servers',ico:ICO.server,badge:'1'},
+    {id:'plugins',label:'Plugins',ico:ICO.plug},
+  ];
+  const nav = navItems.map(n =>
+    `<div class="sim-dlg-item${n.id===highlight?' sel':''}">${n.ico} ${n.label}${n.badge?`<span class="sim-dlg-badge">${n.badge}</span>`:''}</div>`
+  ).join('');
+
+  const typeLabel = item ? item.label || item.title : 'Skill';
+  return `<div class="sim" style="margin-bottom:16px;">
+    <div class="sim-titlebar"><span style="font-weight:600;">Chat Customizations</span><span style="margin-left:auto;color:var(--text-muted);">&times;</span></div>
+    <div class="sim-dialog">
+      <div class="sim-dlg-nav">${nav}<div class="sim-dlg-footer">${ICO.folder} My project</div></div>
+      <div class="sim-dlg-content">
+        <div class="sim-new-btn">+ New ${typeLabel} (Workspace)</div>
+        <div class="sim-search">Type to search...</div>
+        <div class="sim-section-hdr"><strong>Built-In</strong></div>
+        <div class="sim-dlg-file"><strong>Commit</strong></div>
+        <div class="sim-dlg-file-desc">Commit staged or unstaged changes with an AI-generated commit message that matches the repository's existing commit styl...</div>
+        <div class="sim-dlg-file"><strong>Update Skills</strong></div>
+        <div class="sim-dlg-file-desc">Create or update repository skills and instructions when major learnings are discovered during a session.</div>
+        <div style="flex:1;"></div>
+        <div style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border);font-size:9px;color:var(--text-muted);">Folders of instructions, scripts, and resources that Copilot loads when relevant. <a style="color:var(--accent);text-decoration:none;">Learn more</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══ ANNOTATED APP SIMULATION ═══ */
+function showScreenshot(canvas){
+  const C=[
+    {cat:"sidebar",name:"Window Controls",tip:"Search, filter, close the app window"},
+    {cat:"sidebar",name:"View Toggles",tip:"Toggle file panel, search, filter views"},
+    {cat:"session",name:"Tab Bar",tip:"New Session / Downloads tabs"},
+    {cat:"session",name:"New Session",tip:"Create a fresh agent session"},
+    {cat:"session",name:"Session List",tip:"Archive, rename, fork, filter, export past sessions"},
+    {cat:"config",name:"Customizations",tip:"Configuration section header grouping all options"},
+    {cat:"config",name:"Agents",tip:"Define custom agent personas with instructions and permissions"},
+    {cat:"config",name:"Skills",tip:"Reusable capability bundles attached to agents"},
+    {cat:"config",name:"Instructions",tip:"Persistent global system-level instructions"},
+    {cat:"config",name:"Prompts",tip:"Saved prompt templates for quick invocation"},
+    {cat:"config",name:"Hooks",tip:"Event-driven triggers before/after agent actions"},
+    {cat:"config",name:"MCP Servers",tip:"External tool integrations via Model Context Protocol"},
+    {cat:"config",name:"Plugins",tip:"Installable agent+skill+prompt workflow bundles"},
+    {cat:"sidebar",name:"Account",tip:"Authenticated GitHub identity gating Copilot features"},
+    {cat:"exec",name:"Local / Cloud",tip:"Choose local (private) or cloud (GitHub PRs) execution"},
+    {cat:"exec",name:"My project Picker",tip:"Select project folder for session scope"},
+    {cat:"input",name:'"+&quot; Button',tip:"Add context or attachments to the prompt"},
+    {cat:"input",name:"Agent Dropdown",tip:"Select which configured agent handles this session"},
+    {cat:"input",name:"Model Selector",tip:"Choose AI model \u2014 Claude Sonnet 4.6, Copilot, Codex"},
+    {cat:"input",name:"Send Button",tip:"Submit the prompt to the selected agent"},
+    {cat:"input",name:"Folder Picker",tip:"Set the working directory / repository context"},
+    {cat:"input",name:"Default Approvals",tip:"Control agent permissions: auto-execute vs confirm"},
+  ];
+  const legend=C.map((c,i)=>`<tr><td style="white-space:nowrap;"><span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:${bcSolid(c.cat)};color:#fff;font-size:9px;font-weight:700;margin-right:6px;">${i+1}</span><strong>${c.name}</strong></td><td>${c.tip}</td></tr>`).join('');
+  canvas.innerHTML=`<div class="detail-view">
+    <div class="dv-badge" style="${bc('session')}">Session</div>
+    <div class="dv-title">App Layout Overview</div>
+    <div class="dv-desc">An interactive simulation of the VS Code Sessions app. See all UI elements in the table below.</div>
+    ${buildAppSim()}
+    <div class="md-content" style="margin-top:20px;"><h3>All UI Elements</h3><table><thead><tr><th>Element</th><th>Description</th></tr></thead><tbody>${legend}</tbody></table></div></div>`;
+  canvas.scrollTop=0;
+}
+
+function setupBadgeTips(root){
+  const tip=document.getElementById('tip');
+  root.querySelectorAll('.ss-badge').forEach(b=>{
+    b.addEventListener('mouseenter',()=>{
+      tip.querySelector('b').textContent=b.dataset.name||'';
+      tip.querySelector('span').textContent=b.dataset.tip||'';
+      const r=b.getBoundingClientRect();tip.style.left=(r.right+8)+'px';tip.style.top=(r.top-4)+'px';
+      tip.classList.add('show');
+      requestAnimationFrame(()=>{const tr=tip.getBoundingClientRect();if(tr.right>window.innerWidth-10)tip.style.left=(r.left-tr.width-8)+'px';if(tr.bottom>window.innerHeight-10)tip.style.top=(window.innerHeight-tr.height-10)+'px';});
+    });
+    b.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  });
+}
+
+/* ═══ MARKDOWN ═══ */
+function renderMD(raw){
+  const lines=raw.split('\n');let html='',inCode=false,codeLines=[],codeLang='',inTable=false,tableRows=[];
+  function flushTable(){if(!tableRows.length)return '';const h=tableRows[0],b=tableRows.slice(2);let t='<table><thead><tr>'+h.split('|').filter(c=>c.trim()).map(c=>`<th>${c.trim()}</th>`).join('')+'</tr></thead><tbody>'+b.map(r=>'<tr>'+r.split('|').filter(c=>c.trim()).map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>').join('')+'</tbody></table>';tableRows=[];return t;}
+  for(const line of lines){
+    if(line.startsWith('```')){if(inCode){html+=`<div class="code-block"><div class="cb-header"><span>${codeLang||'text'}</span><span class="cb-copy" onclick="this.textContent='Copied!';navigator.clipboard.writeText(this.closest('.code-block').querySelector('.cb-body').textContent);setTimeout(()=>this.textContent='Copy',1500)">Copy</span></div><div class="cb-body">${esc(codeLines.join('\n'))}</div></div>`;inCode=false;codeLines=[];codeLang='';}else{if(inTable){html+=flushTable();inTable=false;}inCode=true;codeLang=line.slice(3).trim();}continue;}
+    if(inCode){codeLines.push(line);continue;}
+    if(line.includes('|')&&line.trim().startsWith('|')){if(!inTable)inTable=true;tableRows.push(line);continue;}else if(inTable){html+=flushTable();inTable=false;}
+    if(line.startsWith('## '))html+=`<h2>${line.slice(3)}</h2>`;
+    else if(line.startsWith('### '))html+=`<h3>${line.slice(4)}</h3>`;
+    else if(line.startsWith('- '))html+=`<ul><li>${fmt(line.slice(2))}</li></ul>`;
+    else if(line.trim()==='')html+='<div style="height:6px;"></div>';
+    else html+=`<p>${fmt(line)}</p>`;
+  }if(inTable)html+=flushTable();return html;
+}
+function fmt(s){return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ═══ THEME ═══ */
+function toggleTheme(){
+  const h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';
+  h.setAttribute('data-theme',n);document.getElementById('theme-lbl').textContent=n==='light'?'Light':'Dark';
+  document.getElementById('ico-moon').style.display=n==='dark'?'':'none';
+  document.getElementById('ico-sun').style.display=n==='light'?'':'none';
+  localStorage.setItem('sessions-theme',n);
+}
+if(localStorage.getItem('sessions-theme')==='dark')toggleTheme();
+
+
+showWelcome();
+</script>
+</body>
+</html>
