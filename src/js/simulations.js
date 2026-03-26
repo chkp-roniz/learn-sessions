@@ -23,7 +23,7 @@ export function buildAppSim() {
         <div class="sim-exec"><div class="sim-toggle"><span class="on">Local</span><span>Cloud</span></div><span style="font-size:10px;color:var(--text-muted);">${ICO.folder} My project</span></div>
         <div class="sim-canvas"><svg viewBox="0 0 60 60" width="48" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="30,5 52,17 52,43 30,55 8,43 8,17"/><line x1="30" y1="5" x2="30" y2="55"/></svg></div>
         <div class="sim-prompt"><div class="sim-prompt-bar"><span>+</span> <span>${ICO.agents} Agent</span> <span>Claude Sonnet 4.6</span> <span class="send">${ICO.file}</span></div></div>
-        <div class="sim-below"><span>${ICO.folder} Folder</span><span>Default Approvals</span></div>
+        <div class="sim-below"><span>${ICO.folder} My project</span><span>Default Approvals</span></div>
       </div>
     </div>
   </div>`;
