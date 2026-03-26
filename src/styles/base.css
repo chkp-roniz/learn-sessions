@@ -8,7 +8,6 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   height: 100dvh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   line-height: 1.5;
