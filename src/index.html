@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore VS Code Sessions</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100' fill='none' stroke='%23d4856a' stroke-width='4' stroke-linejoin='round'%3E%3Cpolygon points='50,8 16,28 16,72 50,92 50,52' fill='%23d4856a' opacity='.15'/%3E%3Cline x1='16' y1='28' x2='50' y2='52'/%3E%3Cline x1='16' y1='72' x2='50' y2='52'/%3E%3Cpolygon points='70,8 104,28 104,72 70,92 70,52' fill='%23d4856a' opacity='.15'/%3E%3Cline x1='104' y1='28' x2='70' y2='52'/%3E%3Cline x1='104' y1='72' x2='70' y2='52'/%3E%3C/svg%3E"
+    />
+    <meta
+      name="description"
+      content="Interactive explorer for VS Code Sessions — the standalone experimental app from Microsoft for AI agent workflows."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://chkp-roniz.github.io/learn-sessions/"
+    />
+    <meta property="og:title" content="Explore VS Code Sessions" />
+    <meta
+      property="og:description"
+      content="Learn the standalone Sessions app by exploring an interactive simulation. Agents, Skills, Hooks, MCP Servers, Plugins and more."
+    />
+    <meta
+      property="og:image"
+      content="https://chkp-roniz.github.io/learn-sessions/resources/logo.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Explore VS Code Sessions" />
+    <meta
+      name="twitter:description"
+      content="Interactive explorer for the standalone VS Code Sessions app — AI agent workflows, zero dependencies."
+    />
+    <meta
+      name="twitter:image"
+      content="https://chkp-roniz.github.io/learn-sessions/resources/logo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="/js/main.js"></script>
+  </head>
+  <body>
+    <div class="titlebar">
+      <span
+        class="mobile-btn"
+        onclick="
+          document.getElementById('sidebar').classList.toggle('open');
+          document.getElementById('backdrop').classList.toggle('show');
+        "
+        ><svg class="ico" viewBox="0 0 16 16">
+          <path
+            d="M2 3.5C2 3.224 2.224 3 2.5 3H13.5C13.776 3 14 3.224 14 3.5S13.776 4 13.5 4H2.5C2.224 4 2 3.776 2 3.5ZM2 7.5C2 7.224 2.224 7 2.5 7H13.5C13.776 7 14 7.224 14 7.5S13.776 8 13.5 8H2.5C2.224 8 2 7.776 2 7.5ZM2 11.5C2 11.224 2.224 11 2.5 11H13.5C13.776 11 14 11.224 14 11.5S13.776 12 13.5 12H2.5C2.224 12 2 11.776 2 11.5Z"
+          /></svg
+      ></span>
+      <div style="flex: 1"></div>
+      <div class="theme-btn" onclick="toggleTheme()">
+        <svg
+          id="ico-moon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          style="width: 14px; height: 14px; display: none"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <svg
+          id="ico-sun"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          style="width: 14px; height: 14px"
+        >
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+        <span id="theme-lbl">Dark</span>
+      </div>
+    </div>
+
+    <div class="app-body">
+      <div class="sidebar" id="sidebar">
+        <div class="new-session-btn" onclick="showWelcome()">New Session</div>
+        <div class="session-section">
+          <div class="session-section-header">
+            <span>LAST 7 DAYS</span><span>1</span>
+          </div>
+          <div class="session-item active" onclick="showWelcome()">
+            <span class="session-dot"></span> Explore Sessions App
+          </div>
+        </div>
+        <div class="custom-label">Customizations</div>
+        <div class="custom-menu" id="menu-items"></div>
+      </div>
+      <div
+        class="backdrop"
+        id="backdrop"
+        onclick="
+          document.getElementById('sidebar').classList.remove('open');
+          this.classList.remove('show');
+        "
+      ></div>
+
+      <div class="center-panel">
+        <div class="exec-bar">
+          <span class="back-btn" onclick="showWelcome()"><svg class="ico" viewBox="0 0 16 16"><path d="M7.854 2.146a.5.5 0 0 1 0 .708L3.707 7H14.5a.5.5 0 0 1 0 1H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0Z"/></svg></span>
+          <div class="mode-toggle">
+            <div class="mode-btn active">Local</div>
+            <div class="mode-btn">Cloud</div>
+          </div>
+          <div class="downloads-pick">
+            <svg class="ico-sm" viewBox="0 0 16 16">
+              <path
+                d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"
+              />
+            </svg>
+            My project
+            <svg class="ico-sm" viewBox="0 0 16 16">
+              <path
+                d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z"
+                transform="rotate(-90 8 8)"
+              />
+            </svg>
+          </div>
+        </div>
+        <div class="canvas-content" id="canvas"></div>
+        <div class="prompt-area">
+          <div class="prompt-bar">
+            <div class="pb-el">
+              <svg class="ico" viewBox="0 0 16 16">
+                <path
+                  d="M8 1.5a.5.5 0 0 0-1 0V7H1.5a.5.5 0 0 0 0 1H7v5.5a.5.5 0 0 0 1 0V8h5.5a.5.5 0 0 0 0-1H8V1.5Z"
+                />
+              </svg>
+            </div>
+            <div class="pb-el">
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <circle
+                  cx="8"
+                  cy="8"
+                  r="6.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1"
+                />
+                <path
+                  d="M5.5 5.5C5.5 5.5 6.5 4 8 4s2.5 1.5 2.5 1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M5.5 10.5C5.5 10.5 6.5 12 8 12s2.5-1.5 2.5-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="8"
+                  y1="4"
+                  x2="8"
+                  y2="12"
+                  stroke="currentColor"
+                  stroke-width="1"
+                />
+              </svg>
+              Agent
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z"
+                  transform="rotate(-90 8 8)"
+                />
+              </svg>
+            </div>
+            <div class="pb-el">
+              Claude Sonnet 4.6
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z"
+                  transform="rotate(-90 8 8)"
+                />
+              </svg>
+            </div>
+            <div class="pb-send">
+              <svg class="ico" viewBox="0 0 16 16">
+                <path
+                  d="M1.177 1.119a.5.5 0 0 1 .547-.066l13 6.5a.5.5 0 0 1 0 .894l-13 6.5a.5.5 0 0 1-.701-.894L3.87 8.5H9.5a.5.5 0 0 0 0-1H3.87L1.023 1.648a.5.5 0 0 1 .154-.529Z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="below-prompt">
+            <div class="bp-item">
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M2 4.5V6h3.586a.5.5 0 0 0 .354-.146L7.293 4.5 5.94 3.146A.5.5 0 0 0 5.586 3H3.5A1.5 1.5 0 0 0 2 4.5ZM1 4.5A2.5 2.5 0 0 1 3.5 2h2.086a1.5 1.5 0 0 1 1.06.44L8.208 4H12.5A2.5 2.5 0 0 1 15 6.5v5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 11.5v-7ZM2 7v4.5A1.5 1.5 0 0 0 3.5 13h9a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 12.5 5H8.207L6.646 6.56A1.5 1.5 0 0 1 5.586 7H2Z"
+                />
+              </svg>
+              Folder
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z"
+                  transform="rotate(-90 8 8)"
+                />
+              </svg>
+            </div>
+            <div
+              class="bp-item"
+              id="approvals-toggle"
+              onclick="toggleApprovalsMenu(event)"
+            >
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M8 1.27l5 1.59v4.14c0 3.33-2.13 6.45-5 7.73C5.13 13.45 3 10.33 3 7V2.86l5-1.59Zm0 1.46L4 4.14V7c0 2.73 1.75 5.3 4 6.47 2.25-1.17 4-3.74 4-6.47V4.14L8 2.73Z"
+                />
+                <path
+                  d="M10.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.293l2.646-2.647a.5.5 0 0 1 .708 0Z"
+                />
+              </svg>
+              Default Approvals
+              <svg class="ico-sm" viewBox="0 0 16 16">
+                <path
+                  d="M6.146 3.146a.5.5 0 0 1 .708.707L2.707 8l4.147 4.146a.5.5 0 0 1-.708.708l-4.5-4.5a.5.5 0 0 1 0-.708l4.5-4.5Z"
+                  transform="rotate(-90 8 8)"
+                />
+              </svg>
+              <div class="bp-dropdown" id="approvals-menu">
+                <div
+                  class="bp-drop-item active"
+                  onclick="navigateApproval('approvals-default', event)"
+                >
+                  <div class="bp-drop-title">
+                    <svg class="ico-sm" viewBox="0 0 16 16">
+                      <path
+                        d="M8 1.27l5 1.59v4.14c0 3.33-2.13 6.45-5 7.73C5.13 13.45 3 10.33 3 7V2.86l5-1.59Zm0 1.46L4 4.14V7c0 2.73 1.75 5.3 4 6.47 2.25-1.17 4-3.74 4-6.47V4.14L8 2.73Z"
+                      />
+                      <path
+                        d="M10.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.293l2.646-2.647a.5.5 0 0 1 .708 0Z"
+                      />
+                    </svg>
+                    Default Approvals
+                  </div>
+                  <div class="bp-drop-desc">
+                    Copilot uses your configured settings
+                  </div>
+                </div>
+                <div
+                  class="bp-drop-item"
+                  onclick="navigateApproval('approvals-bypass', event)"
+                >
+                  <div class="bp-drop-title">
+                    <svg class="ico-sm" viewBox="0 0 16 16">
+                      <path
+                        d="M7.56 1.22a.75.75 0 0 1 .88 0l1.5 1.1a.75.75 0 0 1-.88 1.22L8 2.72l-1.06.82a.75.75 0 0 1-.88-1.22l1.5-1.1ZM8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM3.5 8a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z"
+                      />
+                    </svg>
+                    Bypass Approvals
+                  </div>
+                  <div class="bp-drop-desc">
+                    All tool calls are auto-approved
+                  </div>
+                </div>
+                <div
+                  class="bp-drop-item"
+                  onclick="navigateApproval('approvals-autopilot', event)"
+                >
+                  <div class="bp-drop-title">
+                    <svg class="ico-sm" viewBox="0 0 16 16">
+                      <path
+                        d="M8 1a.5.5 0 0 1 .5.5V3h2a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h2V1.5A.5.5 0 0 1 8 1ZM3 7.5a5 5 0 0 1 10 0v1a.5.5 0 0 1-.146.354l-2 2A.5.5 0 0 1 10.5 11h-5a.5.5 0 0 1-.354-.146l-2-2A.5.5 0 0 1 3 8.5v-1Zm5-3.5a4 4 0 0 0-4 4v.793l1.854 1.854h4.292L12 8.793V8a4 4 0 0 0-4-4Zm-1 9.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H7Z"
+                      />
+                    </svg>
+                    Autopilot (Preview)
+                  </div>
+                  <div class="bp-drop-desc">
+                    Autonomously iterates from start to finish
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="rp-tabs">
+          <div class="rp-tab">Changes</div>
+          <div class="rp-tab active">Files</div>
+        </div>
+        <div class="rp-header">
+          <span class="tb-icon" style="width: 20px; height: 20px"
+            ><svg class="ico-sm" viewBox="0 0 16 16">
+              <path
+                d="M8 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm-1 3a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"
+              /></svg></span
+          ><span class="tb-icon" style="width: 20px; height: 20px"
+            ><svg class="ico-sm" viewBox="0 0 16 16">
+              <path
+                d="M2.589 2.716l.057-.071a.5.5 0 0 1 .638-.058l.069.058L8 7.293l4.646-4.647a.5.5 0 0 1 .708.708L8.707 8l4.647 4.646a.5.5 0 0 1-.708.708L8 8.707l-4.646 4.647a.5.5 0 0 1-.708-.708L7.293 8 2.646 3.354a.5.5 0 0 1-.057-.638Z"
+              /></svg
+          ></span>
+        </div>
+        <div class="rp-tree" id="rp-tree"></div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a href="https://github.com/chkp-roniz/learn-sessions" target="_blank" rel="noopener" class="footer-link">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="https://ko-fi.com/E1E71WJ8UZ" target="_blank" rel="noopener" class="footer-link">
+        <img src="https://storage.ko-fi.com/cdn/kofi3.png?v=6" alt="Support on Ko-fi" height="20" style="border:0;" />
+      </a>
+    </footer>
+
+    <div class="tip" id="tip"><b></b><span></span></div>
+  </body>
+</html>

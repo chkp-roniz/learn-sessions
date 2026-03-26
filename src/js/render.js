@@ -93,6 +93,8 @@ export function showWelcome() {
   document
     .querySelectorAll(".menu-item")
     .forEach((el) => el.classList.remove("selected"));
+  const bb = document.querySelector(".back-btn");
+  if (bb) bb.classList.remove("visible");
   const canvas = document.getElementById("canvas");
   const HIDDEN_CARDS = [
     "annotated",
@@ -125,6 +127,8 @@ export function showWelcome() {
 }
 
 export function showDetail(item) {
+  const bb = document.querySelector(".back-btn");
+  if (bb) bb.classList.add("visible");
   const canvas = document.getElementById("canvas");
   if (item.content === "__SCREENSHOT__") {
     showScreenshot(canvas);

@@ -8,6 +8,21 @@
   transition: background 0.2s;
   position: relative;
 }
+.back-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+.back-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
 .exec-bar {
   display: flex;
   align-items: center;
