@@ -4,7 +4,7 @@
   <a href="https://chkp-roniz.github.io/learn-sessions/"><img src="https://img.shields.io/badge/live_demo-learn--sessions-d4856a?style=flat-square" alt="Live Demo"></a>
   <a href="https://github.com/chkp-roniz/learn-sessions/stargazers"><img src="https://img.shields.io/github/stars/chkp-roniz/learn-sessions?style=flat-square&color=b8965e" alt="Stars"></a>
   <img src="https://img.shields.io/badge/zero_dependencies-vanilla_JS-3a3632?style=flat-square" alt="Zero Dependencies">
-  <img src="https://img.shields.io/badge/single_file-index.html-569cd6?style=flat-square" alt="Single File">
+  <img src="https://img.shields.io/badge/single_file_build-vite-569cd6?style=flat-square" alt="Single File Build">
   <a href='https://ko-fi.com/E1E71WJ8UZ' target='_blank'><img height='24' style='border:0px;height:24px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 </p>
 
@@ -15,7 +15,7 @@ An interactive single-page explorer that teaches you everything about **VS Code 
 There is no official documentation, no public download page, and no tutorial. This project fills that gap with a fully interactive simulation you can click through — no access to the app required.
 
 <p align="center">
-  <img src="./resources/screenshot.png" alt="Screenshot" width="820">
+  <img src="./public/resources/screenshot.png" alt="Screenshot" width="820">
 </p>
 
 ## What You'll Learn
@@ -43,23 +43,39 @@ Or run locally:
 
 ```bash
 git clone https://github.com/chkp-roniz/learn-sessions.git
-open learn-sessions/index.html
+cd learn-sessions
+npm install
+npm run dev
+```
+
+## Development
+
+```bash
+npm install           # Install dev dependencies (vite, vite-plugin-singlefile)
+npm run dev           # Start dev server with HMR
+npm run build         # Build single-file dist/index.html
+npm run preview       # Preview the built file
 ```
 
 ## Project Structure
 
 ```
 learn-sessions/
-├── index.html          # The entire explorer — single self-contained file
-├── README.md
-└── .docs/              # Reference screenshots and research notes
-    ├── logo.png
-    ├── approvals.png
-    ├── app.png
-    └── ...
+├── index.html              # Vite entry — HTML structure + meta tags
+├── CLAUDE.md               # Project docs for AI agents
+├── package.json
+├── vite.config.js
+├── src/
+│   ├── main.css            # Barrel: @import all CSS in order
+│   ├── styles/             # 12 CSS modules (theme, layout, responsive, ...)
+│   └── js/                 # 8 JS modules (icons, data, render, theme, ...)
+├── public/resources/       # Static assets (logo.png, screenshot.png)
+├── dist/                   # Build output (gitignored)
+│   └── index.html          # Single self-contained deployed file
+└── .docs/                  # Reference screenshots and research notes
 ```
 
-Zero frameworks, zero bundlers, zero build steps. One HTML file with embedded CSS and vanilla JS.
+Zero runtime dependencies. Modular source with Vite, single-file build output.
 
 ## Background
 

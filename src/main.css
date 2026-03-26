@@ -1,0 +1,12 @@
+@import './styles/theme.css';
+@import './styles/base.css';
+@import './styles/titlebar.css';
+@import './styles/layout.css';
+@import './styles/center.css';
+@import './styles/right-panel.css';
+@import './styles/welcome.css';
+@import './styles/detail.css';
+@import './styles/simulations.css';
+@import './styles/tooltip.css';
+@import './styles/footer.css';
+@import './styles/responsive.css';

@@ -1,0 +1,59 @@
+:root {
+  --bg-base: #faf9f7;
+  --bg-surface: #f5f3f0;
+  --bg-elevated: #edeae6;
+  --bg-hover: #eae8e3;
+  --bg-active: #e0ddd7;
+  --bg-sidebar: #f5f3f0;
+  --bg-titlebar: #eae8e3;
+  --bg-input: #ffffff;
+  --bg-panel: #f9f8f6;
+  --bg-modal: #ffffff;
+  --border: #e0ddd7;
+  --border-light: #ebe8e3;
+  --text-primary: #3b3735;
+  --text-secondary: #7a756c;
+  --text-muted: #a8a29e;
+  --text-bright: #1a1816;
+  --text-placeholder: #c5c0b8;
+  --accent: #d4856a;
+  --accent-hover: #c47a5e;
+  --accent-bg: rgba(212, 133, 106, 0.12);
+  --accent-border: #e8b4a0;
+  --badge-green: #6a9955;
+  --badge-blue: #569cd6;
+  --badge-purple: #b07cc6;
+  --badge-teal: #4ec9b0;
+  --badge-gold: #cca75a;
+  --badge-rust: #c47a50;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --font-ui:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --sidebar-w: 230px;
+  --right-panel-w: 260px;
+}
+[data-theme="dark"] {
+  --bg-base: #1a1816;
+  --bg-surface: #22201d;
+  --bg-elevated: #2a2825;
+  --bg-hover: #33302c;
+  --bg-active: #3d3a35;
+  --bg-sidebar: #22201d;
+  --bg-titlebar: #2a2825;
+  --bg-input: #2a2825;
+  --bg-panel: #1e1c19;
+  --bg-modal: #2a2825;
+  --border: #3d3a35;
+  --border-light: #33302c;
+  --text-primary: #b8b0a4;
+  --text-secondary: #847c72;
+  --text-muted: #5c564f;
+  --text-bright: #e6dfd6;
+  --text-placeholder: #5c564f;
+  --accent: #d4856a;
+  --accent-hover: #e09580;
+  --accent-bg: rgba(212, 133, 106, 0.15);
+  --accent-border: #9e6550;
+}

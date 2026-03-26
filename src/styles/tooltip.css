@@ -1,0 +1,27 @@
+.tip {
+  position: fixed;
+  z-index: 200;
+  background: var(--bg-modal);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  max-width: 260px;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.12s;
+  line-height: 1.5;
+}
+[data-theme="dark"] .tip {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+.tip.show {
+  opacity: 1;
+}
+.tip b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-bright);
+}

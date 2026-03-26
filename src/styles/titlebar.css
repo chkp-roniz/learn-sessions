@@ -1,0 +1,95 @@
+/* ═══ TITLE BAR ═══ */
+.titlebar {
+  height: 40px;
+  flex-shrink: 0;
+  background: var(--bg-titlebar);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 14px;
+  user-select: none;
+}
+.tb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tb-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 3px;
+}
+.tb-icon:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+.tb-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.tb-tabs {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+}
+.tb-tab {
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 0;
+  position: relative;
+}
+.tb-tab:hover {
+  color: var(--text-secondary);
+}
+.tb-tab.active {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.tb-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.tb-dot {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+.tb-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  transition: all 0.15s;
+}
+.theme-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.theme-btn svg {
+  width: 14px;
+  height: 14px;
+}
